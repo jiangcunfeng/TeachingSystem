@@ -1,0 +1,93 @@
+@page "/BasicInfo/Account/Login"
+
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using System.Net.Http.Headers
+
+@inject UserManager<User> _userManager
+@inject SignInManager<User> _signInManager
+@inject IMatToaster Toaster
+@inject IDataProtectionProvider dataProtectionProvider
+
+<EditForm Model="myModel" OnValidSubmit="TryLogin">
+    <DataAnnotationsValidator/>
+ 
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
+                <p>
+                    <MatTextField Label="用户名" @bind-Value="myModel.Username"/>
+                    <ValidationMessage For="@(() => myModel.Username)"/>
+                </p>
+                <p>
+                    <MatTextField Label="密码" @bind-Value="myModel.Password" Type="password"/>
+                    <ValidationMessage For="@(() => myModel.Password)"/>
+                </p>
+                <p>
+                    <MatCheckbox Label="记住我" @bind-Value="myModel.RememberMe" />
+                </p>
+                <p>
+                <MatButton Type="submit" Raised="true">登录</MatButton>
+
+                </p>
+            </div>
+ 
+          
+        </div>
+    </div>
+ 
+</EditForm>
+
+
+ 
+@code {
+    [Parameter]
+    public string ReturnUrl { get; set; } = "/";
+    LoginModel myModel = new LoginModel();
+
+    async Task TryLogin()
+    {
+        var user = await _userManager.FindByNameAsync(myModel.Username);
+        if (user != null && await _userManager.CheckPasswordAsync(user, myModel.Password))
+        {
+            var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "SignIn");
+
+            var data = $"{user.Id}|{token}";
+
+            var parsedQuery = System.Web.HttpUtility.ParseQueryString(new Uri(NavigationManager.Uri).Query);
+
+            var returnUrl = parsedQuery["returnUrl"];
+
+            if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                data += $"|{returnUrl}";
+            }
+
+            var protector = dataProtectionProvider.CreateProtector("SignIn");
+
+            var pdata = protector.Protect(data);
+
+            NavigationManager.NavigateTo("/account/signinactual?t=" + pdata, forceLoad: true);
+        }
+        else
+        {
+            Toaster.Add("用户名或密码错误", MatToastType.Danger);
+        }
+
+    }
+
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "请填写用户名")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "请填写密码")]
+        public string Password { get; set; }
+
+        public bool RememberMe { get; set; }
+
+    }
+}
+ 
