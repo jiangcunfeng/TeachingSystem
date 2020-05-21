@@ -5,19 +5,25 @@ using System.Threading.Tasks;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TeachingSystem.Data;
+using TeachingSystem.Areas.BasicInfo;
 
-namespace TeachingSystem {
-    public class Startup {
-        public Startup(IConfiguration configuration) {
+namespace TeachingSystem
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
             Configuration = configuration;
         }
 
@@ -25,24 +31,27 @@ namespace TeachingSystem {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services) {
+        public void ConfigureServices(IServiceCollection services)
+        {
 
             services.AddDbContext<TeachingSystemIdentityDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("AppDbContextConnection")));
 
-            services.AddDefaultIdentity<User>(options => {
-                    options.SignIn.RequireConfirmedAccount = false;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequiredLength = 0;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireLowercase = false;
-                })
+            services.AddDefaultIdentity<User>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 0;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+            })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<TeachingSystemIdentityDbContext>();
 
-            services.AddMatToaster(config => {
+            services.AddMatToaster(config =>
+            {
                 config.Position = MatToastPosition.BottomRight;
                 config.PreventDuplicates = true;
                 config.NewestOnTop = true;
@@ -53,14 +62,19 @@ namespace TeachingSystem {
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<User> userManager) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<User> userManager)
+        {
             ApplicationDbInitializer.SeedUsers(userManager);
-            if (env.IsDevelopment()) {
+            if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
-            } else {
+            }
+            else
+            {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -68,12 +82,15 @@ namespace TeachingSystem {
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseAuthentication();
-            app.UseAuthorization();
+
 
             app.UseRouting();
 
-            app.UseEndpoints(endpoints => {
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");

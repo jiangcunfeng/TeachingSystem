@@ -14,25 +14,25 @@
  
     <div class="mat-layout-grid">
         <div class="mat-layout-grid-inner">
-            
-            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
+            <div class="mat-layout-grid-cell"></div>
+            <div class="mat-layout-grid-cell">
                 <p>
-                    <MatTextField Label="用户名" @bind-Value="myModel.Username"/>
+                    <MatTextField Label="用户名" @bind-Value="myModel.Username" FullWidth="true"/>
                     <ValidationMessage For="@(() => myModel.Username)"/>
                 </p>
                 <p>
-                    <MatTextField Label="密码" @bind-Value="myModel.Password" Type="password"/>
+                    <MatTextField Label="密码" @bind-Value="myModel.Password" Type="password" FullWidth="true"/>
                     <ValidationMessage For="@(() => myModel.Password)"/>
                 </p>
                 <p>
                     <MatCheckbox Label="记住我" @bind-Value="myModel.RememberMe" />
                 </p>
-                <p>
+                <p style="text-align: center">
                 <MatButton Type="submit" Raised="true">登录</MatButton>
 
                 </p>
             </div>
- 
+            <div class="mat-layout-grid-cell"></div>
           
         </div>
     </div>
