@@ -14,9 +14,8 @@ namespace TeachingSystem.Data
                     UserName = "admin",
                     Email = "abc@xyz.com"
                 };
-
+                
                 IdentityResult result = userManager.CreateAsync(user, "admin").Result;
-
                 if (result.Succeeded)
                 {
                     userManager.AddToRoleAsync(user, "Admin").Wait();

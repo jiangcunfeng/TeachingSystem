@@ -9,8 +9,8 @@ using TeachingSystem.Data;
 namespace TeachingSystem.Migrations
 {
     [DbContext(typeof(TeachingSystemIdentityDbContext))]
-    [Migration("20200520053752_CreateIdentitySchema")]
-    partial class CreateIdentitySchema
+    [Migration("20200522065716_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,6 +42,36 @@ namespace TeachingSystem.Migrations
                         .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "9919f07b-cb94-4cbd-becc-f2578d654090",
+                            ConcurrencyStamp = "dd4a9b7d-eb0b-4d15-9405-6a96dc80ab19",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "b116f605-e829-44a7-9b72-9c9657e38779",
+                            ConcurrencyStamp = "8568f8ae-450b-4bd3-af79-fd6dd6dd53c6",
+                            Name = "Teacher",
+                            NormalizedName = "TEACHER"
+                        },
+                        new
+                        {
+                            Id = "bb779bb5-1b08-4823-a246-6a2c1b42991d",
+                            ConcurrencyStamp = "786dbb16-da1b-4ebf-97af-dfe600bb75df",
+                            Name = "Student",
+                            NormalizedName = "STUDENT"
+                        },
+                        new
+                        {
+                            Id = "2ce767fc-076d-48f2-b740-e6dee9d8654f",
+                            ConcurrencyStamp = "917bbee5-0e42-49e0-9d64-705fd19c47b5",
+                            Name = "Manager",
+                            NormalizedName = "MANAGER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -158,6 +188,9 @@ namespace TeachingSystem.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Belong")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
@@ -173,6 +206,9 @@ namespace TeachingSystem.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
@@ -193,6 +229,9 @@ namespace TeachingSystem.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sex")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("TwoFactorEnabled")

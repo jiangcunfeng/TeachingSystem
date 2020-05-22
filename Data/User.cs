@@ -12,7 +12,7 @@ namespace TeachingSystem.Data
     public class User : IdentityUser
     {
         [NotMapped]
-        public string Role { get; set; }
+        public IEnumerable<string> Roles { get; set; }
         public string Name { get; set; }
         public string Belong { get; set; }
         public string Sex { get; set; }

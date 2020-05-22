@@ -1,0 +1,177 @@
+
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Identity;
+
+@inject UserManager<User> _userManager
+@inject IMatToaster Toaster
+
+<EditForm Model="user" OnValidSubmit="Save">
+    <DataAnnotationsValidator/>
+        <p>
+            <MatTextField Label="用户名" @bind-Value="user.UserName" FullWidth="true" ReadOnly="@(!create)"/>
+            <ValidationMessage For="@(() => user.UserName)"/>
+        </p>
+        <p>
+            <MatTextField Label="密码" @bind-Value="user.Password" Type="password" FullWidth="true"/>
+            <ValidationMessage For="@(() => user.Password)"/>
+        </p>
+
+        <p>
+            <MatTextField Label="姓名" @bind-Value="user.Name" FullWidth="true"/>
+            <ValidationMessage For="@(() => user.Name)"/>
+        </p>
+
+        <p>
+            <MatTextField Label="所属单位" @bind-Value="user.Belong" FullWidth="true"/>
+            <ValidationMessage For="@(() => user.Belong)"/>
+        </p>
+
+
+        <p>
+            <h5>性别：</h5>
+            <MatRadioGroup @bind-Value="user.Sex" TValue="string">
+                <MatRadioButton Value="@("男")" TValue="string">男</MatRadioButton>
+                <MatRadioButton Value="@("女")" TValue="string">女</MatRadioButton>
+            </MatRadioGroup>
+        </p>
+
+        
+        <p>
+            <h5>身份：</h5>
+            <MatCheckbox @bind-Value="@user.IsAdmin" Label="管理员" Disable="@(!admin)"></MatCheckbox>
+            <MatCheckbox @bind-Value="@user.IsManager" Label="教务管理员" Disable="@(!admin)"></MatCheckbox>
+            <MatCheckbox @bind-Value="@user.IsTeacher" Label="教师" Disable="@(!admin)"></MatCheckbox>
+            <MatCheckbox @bind-Value="@user.IsStudent" Label="学生" Disable="@(!admin)"></MatCheckbox>
+        </p>
+
+        
+        <p style="text-align: center">
+            <MatButton Type="submit" Raised="true">保存</MatButton>
+        </p>
+            
+</EditForm>
+
+
+ 
+@code {
+    [Parameter]
+    public bool create{get;set;} = false;
+
+    [Parameter]
+    public bool admin{get;set;} = false;
+
+    [Parameter]
+    public string id{get;set;}
+
+    [Parameter]
+    public Action OnSave{get;set;}
+
+    UserModel user;
+    User usr;
+
+    
+
+    async Task Save() {
+        if(create) {
+            usr = new User
+            {
+                UserName = user.UserName,
+                Email = user.UserName,
+                Name = user.Name,
+                Sex = user.Sex,
+                Belong = user.Belong
+
+            };
+
+            IdentityResult result = await _userManager.CreateAsync(usr, user.Password);
+            if(result.Succeeded) {
+                if(user.IsAdmin) {
+                    await _userManager.AddToRoleAsync(usr, "Admin");
+                }
+                if(user.IsManager) {
+                    await _userManager.AddToRoleAsync(usr, "Manager");
+                }
+                if(user.IsStudent) {
+                    await _userManager.AddToRoleAsync(usr, "Student");
+                }
+                if(user.IsTeacher) {
+                    await _userManager.AddToRoleAsync(usr, "Teacher");
+                }
+                OnSave();
+            }
+        } else {
+            usr.Name = user.Name;
+            usr.Sex =user.Sex;
+            usr.Belong = user.Belong;
+            await _userManager.UpdateAsync(usr);
+
+            if(user.Password?.Length>0) {
+                string resetToken = await _userManager.GeneratePasswordResetTokenAsync(usr);
+                await _userManager.ResetPasswordAsync(usr, resetToken, user.Password);
+
+            }
+            if(user.IsAdmin) {
+                await _userManager.AddToRoleAsync(usr, "Admin");
+            } else {
+                await _userManager.RemoveFromRoleAsync(usr, "Admin");
+
+            }
+            if(user.IsManager) {
+                await _userManager.AddToRoleAsync(usr, "Manager");
+            }else {
+                await _userManager.RemoveFromRoleAsync(usr, "Manager");
+
+            }
+            if(user.IsStudent) {
+                await _userManager.AddToRoleAsync(usr, "Student");
+            }else {
+                await _userManager.RemoveFromRoleAsync(usr, "Student");
+
+            }
+            if(user.IsTeacher) {
+                await _userManager.AddToRoleAsync(usr, "Teacher");
+            }else {
+                await _userManager.RemoveFromRoleAsync(usr, "Teacher");
+
+            }
+           
+        }
+    }
+
+    protected override async Task OnInitializedAsync() {
+
+        if(create) {
+            user = new UserModel();
+        } else {
+            usr = await _userManager.FindByIdAsync(id);
+            user = new UserModel() {
+                UserName = usr.UserName,
+                Name = usr.Name,
+                Sex = usr.Sex,
+                Belong = usr.Belong
+            };
+            if(await _userManager.IsInRoleAsync(usr, "Admin"))           user.IsAdmin= true;
+            if(await _userManager.IsInRoleAsync(usr, "Student"))           user.IsStudent= true;
+            if(await _userManager.IsInRoleAsync(usr, "Manager"))           user.IsManager= true;
+            if(await _userManager.IsInRoleAsync(usr, "Teacher"))           user.IsTeacher= true;
+        }
+    }
+
+    class UserModel {
+        [Required]
+        public string UserName{get;set;}
+        public string Password{get;set;}
+        public string Name{get;set;}
+        public string Sex{get;set;}
+        public string Belong{get;set;}
+
+        public bool IsAdmin{get;set;}
+        public bool IsManager{get;set;}
+        public bool IsTeacher{get;set;}
+        public bool IsStudent{get;set;}
+
+    }
+}
+ 

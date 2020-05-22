@@ -1,0 +1,20 @@
+@page "/BasicInfo/Manage/Account/Create"
+@using TeachingSystem.Areas.BasicInfo.Shared
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell"></div>
+        <div class="mat-layout-grid-cell">
+            <h1>创建用户</h1>
+            <UserInfo create="true" admin="true" OnSave="OnSave"></UserInfo>
+        </div>
+        <div class="mat-layout-grid-cell"></div>
+        
+    </div>
+</div>
+ 
+
+@code {
+    void OnSave() {
+        NavigationManager.NavigateTo("/BasicInfo/Manage/Account");
+    }
+}

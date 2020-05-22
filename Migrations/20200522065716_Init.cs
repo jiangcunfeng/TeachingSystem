@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TeachingSystem.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -39,7 +39,10 @@ namespace TeachingSystem.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Belong = table.Column<string>(nullable: true),
+                    Sex = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -151,6 +154,26 @@ namespace TeachingSystem.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "9919f07b-cb94-4cbd-becc-f2578d654090", "dd4a9b7d-eb0b-4d15-9405-6a96dc80ab19", "Admin", "ADMIN" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "b116f605-e829-44a7-9b72-9c9657e38779", "8568f8ae-450b-4bd3-af79-fd6dd6dd53c6", "Teacher", "TEACHER" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "bb779bb5-1b08-4823-a246-6a2c1b42991d", "786dbb16-da1b-4ebf-97af-dfe600bb75df", "Student", "STUDENT" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "2ce767fc-076d-48f2-b740-e6dee9d8654f", "917bbee5-0e42-49e0-9d64-705fd19c47b5", "Manager", "MANAGER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

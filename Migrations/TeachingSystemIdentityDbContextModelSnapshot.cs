@@ -44,29 +44,29 @@ namespace TeachingSystem.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2909abef-4699-49c2-8b62-93b96706403f",
-                            ConcurrencyStamp = "330e130c-4aa7-44ca-9398-09b18fed0abb",
+                            Id = "9919f07b-cb94-4cbd-becc-f2578d654090",
+                            ConcurrencyStamp = "dd4a9b7d-eb0b-4d15-9405-6a96dc80ab19",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "a7d58a06-042b-46fb-8fcc-fdfb0aa78763",
-                            ConcurrencyStamp = "791e2530-492f-47e8-949c-617d729dc5bd",
+                            Id = "b116f605-e829-44a7-9b72-9c9657e38779",
+                            ConcurrencyStamp = "8568f8ae-450b-4bd3-af79-fd6dd6dd53c6",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = "23d96ca0-eb7f-4669-98e0-cd68ab933ecd",
-                            ConcurrencyStamp = "1721baeb-45f3-4c92-b66c-7f55c730a812",
+                            Id = "bb779bb5-1b08-4823-a246-6a2c1b42991d",
+                            ConcurrencyStamp = "786dbb16-da1b-4ebf-97af-dfe600bb75df",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = "2f834393-634e-48f5-8311-4654f2d183d2",
-                            ConcurrencyStamp = "6d48351b-d9fb-4bd1-94cf-04ce48a281a9",
+                            Id = "2ce767fc-076d-48f2-b740-e6dee9d8654f",
+                            ConcurrencyStamp = "917bbee5-0e42-49e0-9d64-705fd19c47b5",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         });
@@ -225,9 +225,6 @@ namespace TeachingSystem.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
