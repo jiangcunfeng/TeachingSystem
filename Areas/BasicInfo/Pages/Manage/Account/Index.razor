@@ -1,0 +1,74 @@
+@page "/BasicInfo/Manage/Account"
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
+@attribute [Authorize(Roles = "ADMIN")]
+@inject UserManager<User> _userManager
+<div class="mat-layout-grid">
+            <div class="mat-layout-grid-inner">
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <MatButton Icon="add">添加用户</MatButton>
+
+                </div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-8">
+                    <MatPaginator Length="@size" PageSize="@pageSize" Page="OnPage"></MatPaginator>
+
+                </div>
+            </div>
+        </div>
+ <table class="table">
+       
+        <thead>
+            <tr>
+                <th scope="col">用户名</th>
+                <th scope="col">身份</th>
+                <th scope="col">姓名</th>
+                <th scope="col">性别</th>
+                <th scope="col">所属单位</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(users != null){
+                  foreach(var user in users){
+                    <tr>
+                        <td>@user.UserName</td>
+                        <td>@user.Role</td>
+                        <td>@user.Name</td>
+                        <td>@user.Sex</td>
+                        <td>@user.Belong</td>
+                        <td><a href="">编辑</a>|<a href="">删除</a></td>
+                    </tr>
+                  
+                }
+            }else {
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">加载中……</span>
+                </div>
+            }
+            
+        </tbody>
+    </table>
+
+@code {
+    int page = 0;
+    int pageSize = 25;
+    int size = 0;
+    IEnumerable<User> users;
+    async Task OnPage(MatPaginatorPageEvent e)
+    {
+        pageSize = e.PageSize;
+        page = e.PageIndex;
+        await UpdateList();
+        StateHasChanged();
+    }
+    async Task UpdateList()
+    {
+        users = await _userManager.Users.Skip(page * pageSize).Take(pageSize).ToListAsync();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        size = await _userManager.Users.CountAsync();
+        await UpdateList();
+        await Task.WhenAll(users.Select())
+    }
+}

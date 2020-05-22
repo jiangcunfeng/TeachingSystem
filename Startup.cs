@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -49,7 +50,7 @@ namespace TeachingSystem
             })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<TeachingSystemIdentityDbContext>();
-
+            services.AddScoped<HttpClient>();
             services.AddMatToaster(config =>
             {
                 config.Position = MatToastPosition.BottomRight;

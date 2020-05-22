@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeachingSystem.Data;
 
 namespace TeachingSystem.Migrations
 {
     [DbContext(typeof(TeachingSystemIdentityDbContext))]
-    partial class TeachingSystemIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200521121741_AddUserMessage")]
+    partial class AddUserMessage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

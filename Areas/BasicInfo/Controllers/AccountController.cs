@@ -52,7 +52,7 @@ namespace TeachingSystem.Areas.BasicInfo.Controllers
         {
             await _signInManager.SignOutAsync();
 
-            return Redirect("/account/signedout");
+            return Redirect("/");
         }
     }
 }

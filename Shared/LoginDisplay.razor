@@ -1,9 +1,7 @@
 <AuthorizeView>
     <Authorized>
         <a href="BasicInfo/Account/Manage" style="color: white;">欢迎， @context.User.Identity.Name!</a>
-        <form method="post" action="BasicInfo/Account/LogOut">
-            <button type="submit" class="nav-link btn btn-link" style="color:white;">退出</button>
-        </form>
+        <a href="account/signout" style="color: white;">退出</a>
     </Authorized>
     <NotAuthorized>
         <a href="BasicInfo/Account/Login" style="color:white;">登录</a>
