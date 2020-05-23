@@ -2,7 +2,7 @@
 
 ## 一些可能会遇到的问题
 ### 怎么配环境？
-参考我上次写的：https://github.com/2020SP-ZJU-SE-LYS-T1/DevelopmentContainer的ReadMe
+参考我上次写的：https://github.com/2020SP-ZJU-SE-LYS-T1/DevelopmentContainer 的ReadMe
 
 ### 默认用户？
 用户名密码都是 admin
