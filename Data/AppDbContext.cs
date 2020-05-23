@@ -13,6 +13,13 @@ namespace TeachingSystem.Data
 
 
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Class> Classes { get; set; }
+        public DbSet<ClassChoice> ClassChoices { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<PostReply> PostReplies { get; set; }
+        public DbSet<UserClasses> UserClasses { get; set; }
+        public DbSet<Test> Tests { get; set; }
+        public DbSet<TestResult> TestResults { get; set; }
 
         public TSSDbContext(DbContextOptions<TSSDbContext> options) : base(options) { }
 
