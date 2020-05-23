@@ -1,4 +1,6 @@
 @page "/BasicInfo/Manage/Account/Create"
+@attribute [Authorize(Roles = "Admin")]
+
 @using TeachingSystem.Areas.BasicInfo.Shared
 <div class="mat-layout-grid">
     <div class="mat-layout-grid-inner">

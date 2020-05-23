@@ -1,14 +1,13 @@
-@page "/BasicInfo/Manage/Account/Edit/{id}"
-@attribute [Authorize(Roles = "Admin")]
-
+@page "/BasicInfo/Manage/Course/Create"
+@attribute [Authorize(Roles = "Manager")]
 
 @using TeachingSystem.Areas.BasicInfo.Shared
 <div class="mat-layout-grid">
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell"></div>
         <div class="mat-layout-grid-cell">
-            <h1>编辑用户</h1>
-            <UserInfo id="@Id" admin="true" OnSave="OnSave"></UserInfo>
+            <h1>创建课程</h1>
+            <CourseInfo create="true" admin="true" OnSave="OnSave"></CourseInfo>
         </div>
         <div class="mat-layout-grid-cell"></div>
         
@@ -17,9 +16,7 @@
  
 
 @code {
-    [Parameter]
-    public string Id{get;set;}
     void OnSave() {
-        NavigationManager.NavigateTo("/BasicInfo/Manage/Account");
+        NavigationManager.NavigateTo("/BasicInfo/Manage/Course");
     }
 }

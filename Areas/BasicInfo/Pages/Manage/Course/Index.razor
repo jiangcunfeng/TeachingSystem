@@ -1,0 +1,89 @@
+@page "/BasicInfo/Manage/Course"
+@attribute [Authorize(Roles = "Manager")]
+
+<div class="mat-layout-grid">
+            <div class="mat-layout-grid-inner">
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <MatButton Icon="add" Link="/BasicInfo/Manage/Course/Create">添加课程</MatButton>
+
+                </div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-8">
+                    <MatPaginator Length="@size" PageSize="@pageSize" Page="OnPage"></MatPaginator>
+
+                </div>
+            </div>
+        </div>
+ <table class="table">
+       
+        <thead>
+            <tr>
+                <th scope="col">课号</th>
+                <th scope="col">课程名称</th>
+                <th scope="col">开课院系</th>
+                <th scope="col">学分</th>
+                <th scope="col">学时</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(courses != null){
+                  foreach(var course in courses){
+                    <tr>
+                        <td>@course.CourseId</td>
+                        <td>@course.Name</td>
+                        <td>@course.Department</td>
+                        <td>@(course.TheoryHours + course.PracticeHours/2.0)</td>
+                        <td>@course.TheoryHours + @course.PracticeHours</td>
+                        <td><a href="/BasicInfo/Manage/Course/Edit/@course.CourseId">编辑</a>|<button type="button" class="btn btn-link" @onclick="@(_ => {courseToDelete=course;dialogIsOpen=true;})">删除</button></td>
+                    </tr>
+                  
+                }
+            }else {
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">加载中……</span>
+                </div>
+            }
+            
+        </tbody>
+    </table>
+    <MatDialog @bind-IsOpen="@dialogIsOpen">
+        <MatDialogTitle>删除课程</MatDialogTitle>
+        <MatDialogContent>
+            <p>真的要删除 @courseToDelete?.Name 吗？这个操作无法恢复</p>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { dialogIsOpen = false; })">否</MatButton>
+            <MatButton OnClick="@DeleteCourse">删除</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+@code {
+    int page = 0;
+    int pageSize = 25;
+    int size = 0;
+    bool dialogIsOpen = false;
+    IEnumerable<Course> courses;
+    Course courseToDelete = null;
+    async Task OnPage(MatPaginatorPageEvent e)
+    {
+        pageSize = e.PageSize;
+        page = e.PageIndex;
+        await UpdateList();
+        StateHasChanged();
+    }
+    async Task DeleteCourse() {
+        await UpdateList();
+        dialogIsOpen = false;
+    }
+    async Task UpdateList()
+    {
+        courses = await DbContext.Courses.Skip(page * pageSize).Take(pageSize).ToListAsync();
+       
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        size = await DbContext.Courses.CountAsync();
+        await UpdateList();
+        
+    }
+}

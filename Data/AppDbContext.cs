@@ -6,11 +6,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace TeachingSystem.Data {
-    public class TeachingSystemIdentityDbContext : IdentityDbContext<User> {
-        public TeachingSystemIdentityDbContext(DbContextOptions<TeachingSystemIdentityDbContext> options) : base(options) { }
+namespace TeachingSystem.Data
+{
+    public class TSSDbContext : IdentityDbContext<User>
+    {
 
-        protected override void OnModelCreating(ModelBuilder builder) {
+
+        public DbSet<Course> Courses { get; set; }
+
+        public TSSDbContext(DbContextOptions<TSSDbContext> options) : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.

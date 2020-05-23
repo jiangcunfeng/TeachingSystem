@@ -35,7 +35,7 @@ namespace TeachingSystem
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<TeachingSystemIdentityDbContext>(options =>
+            services.AddDbContext<TSSDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("AppDbContextConnection")));
 
@@ -49,7 +49,7 @@ namespace TeachingSystem
                 options.Password.RequireLowercase = false;
             })
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<TeachingSystemIdentityDbContext>();
+                .AddEntityFrameworkStores<TSSDbContext>();
             services.AddScoped<HttpClient>();
             services.AddMatToaster(config =>
             {
