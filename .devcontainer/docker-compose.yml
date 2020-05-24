@@ -11,6 +11,7 @@ services:
       - 6600:6600
     networks:
       tss_net: {}
+    command: sleep infinity 
   db:
     image: postgres:alpine
     networks:
