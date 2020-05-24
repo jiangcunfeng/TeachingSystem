@@ -36,7 +36,7 @@ namespace TeachingSystem
         {
 
             services.AddDbContext<TSSDbContext>(options =>
-                options.UseSqlite(
+                options.UseNpgsql(
                     Configuration.GetConnectionString("AppDbContextConnection")));
 
             services.AddDefaultIdentity<User>(options =>

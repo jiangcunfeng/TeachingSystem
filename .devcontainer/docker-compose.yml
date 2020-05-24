@@ -1,0 +1,22 @@
+version: '3'
+services:
+  tss:
+    user: vscode
+    build:
+      context: .
+      dockerfile: DockerFile
+    volumes:
+      - ..:/workspace:cached
+    ports:
+      - 6600:6600
+    networks:
+      tss_net: {}
+  db:
+    image: postgres:alpine
+    networks:
+      tss_net: {}
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+networks:
+  tss_net: {}
