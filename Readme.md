@@ -15,7 +15,7 @@
 ### 如何初始化数据库？
 
 ```bash
-dotnet database update
+dotnet ef database update
 ```
 ### 我修改了数据库里的东西以后要做什么？
 首先添加Migration
