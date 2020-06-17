@@ -18,8 +18,6 @@ namespace TeachingSystem.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostReply> PostReplies { get; set; }
         public DbSet<UserClasses> UserClasses { get; set; }
-        public DbSet<Test> Tests { get; set; }
-        public DbSet<TestResult> TestResults { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<TestPaper> TestPapers { get; set; }
 
