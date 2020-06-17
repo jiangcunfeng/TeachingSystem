@@ -1,21 +1,20 @@
-@page "/BasicInfo/Manage/Course/Create"
+@page "/online-judger/test-bank/create"
 
-@using TeachingSystem.Areas.BasicInfo.Shared
+@using TeachingSystem.Areas.OnlineJudger.Shared
+
 <div class="mat-layout-grid">
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell"></div>
         <div class="mat-layout-grid-cell">
-            <h1>创建课程</h1>
-            <CourseInfo create="true" admin="true" OnSave="OnSave"></CourseInfo>
+            <h1>Create Question</h1>
+            <QuestionInfo create="true" admin="true" OnSave="OnSave"></QuestionInfo>
         </div>
         <div class="mat-layout-grid-cell"></div>
-        
     </div>
 </div>
- 
 
 @code {
     void OnSave() {
-        NavigationManager.NavigateTo("/BasicInfo/Manage/Course");
+        NavigationManager.NavigateTo("/online-judger/test-bank");
     }
 }

@@ -1,0 +1,89 @@
+@page "/online-judger/test-bank"
+
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+            <MatButton Icon="add" Link="/online-judger/test-bank/create">Create Question</MatButton>
+        </div>
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-8">
+            <MatPaginator Length="@size" PageSize="@pageSize" Page="OnPage"></MatPaginator>
+        </div>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Type</th>
+            <th scope="col">Name</th>
+            <th scope="col">Content</th>
+            <th scope="col">Answer</th>
+            <th scope="col">Course</th>
+            <th scope="col">KnowledgePoint</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(questions != null)
+        {
+            foreach(var question in questions)
+            {
+                <tr>
+                    <td>@question.QuestionId</td>
+                    <td>@question.Type</td>
+                    <td>@question.Name</td>
+                    <td>@question.Content</td>
+                    <td>@question.Answer</td>
+                    <td>@question.Course</td>
+                    <td>@question.Point</td>
+                    <td><a href="/online-judger/test-bank/edit/@question.QuestionId">Edit</a>|<button type="button" class="btn btn-link" @onclick="@(_ => {questionToDelete=question;dialogIsOpen=true;})">Delete</button></td>
+                </tr>  
+            }
+        }
+        else 
+        {
+            <div class="spinner-border" role="status">
+                <span class="sr-only">加载中……</span>
+            </div>
+        }
+    </tbody>
+</table>
+
+    <MatDialog @bind-IsOpen="@dialogIsOpen">
+        <MatDialogTitle>Delete Question</MatDialogTitle>
+        <MatDialogContent>
+            <p>Delete @questionToDelete?.Name ?</p>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { dialogIsOpen = false; })">No</MatButton>
+            <MatButton OnClick="@DeleteQuestion">Delete</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+@code {
+    int page = 0;
+    int pageSize = 25;
+    int size = 0;
+    bool dialogIsOpen = false;
+    IEnumerable<Question> questions;
+    Question questionToDelete = null;
+    async Task OnPage(MatPaginatorPageEvent e)
+    {
+        pageSize = e.PageSize;
+        page = e.PageIndex;
+        await UpdateList();
+        StateHasChanged();
+    }
+    async Task DeleteQuestion() {
+        await UpdateList();
+        dialogIsOpen = false;
+    }
+    async Task UpdateList()
+    {
+        questions = await DbContext.Questions.Skip(page * pageSize).Take(pageSize).ToListAsync();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        size = await DbContext.Questions.CountAsync();
+        await UpdateList();
+    }
+}
