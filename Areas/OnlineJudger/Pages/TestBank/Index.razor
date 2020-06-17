@@ -10,6 +10,10 @@
         </div>
     </div>
 </div>
+
+<MatAutocompleteList Items="@options" TItem="string" Label="Search By Type" @bind-Value="@typeKey"></MatAutocompleteList>
+<MatButton OnClick="@Search" Label="Submit"></MatButton>
+
 <table class="table">
     <thead>
         <tr>
@@ -66,6 +70,9 @@
     bool dialogIsOpen = false;
     IEnumerable<Question> questions;
     Question questionToDelete = null;
+    string[] options = new[] {"TrueOrFalse", "SingleChoice", "MultipleChoice"};
+    string typeKey;
+    bool searchFlag = false;
     async Task OnPage(MatPaginatorPageEvent e)
     {
         pageSize = e.PageSize;
@@ -73,13 +80,33 @@
         await UpdateList();
         StateHasChanged();
     }
-    async Task DeleteQuestion() {
+    async Task DeleteQuestion() 
+    {
+        DbContext.Questions.Remove(questionToDelete);
+        await DbContext.SaveChangesAsync();
         await UpdateList();
         dialogIsOpen = false;
     }
+    async Task Search() 
+    {
+        if (typeKey != null && typeKey != "")
+        {
+            searchFlag = true;
+        }
+        await UpdateList();
+        searchFlag = false;
+        typeKey = null;
+    }
     async Task UpdateList()
     {
-        questions = await DbContext.Questions.Skip(page * pageSize).Take(pageSize).ToListAsync();
+        if (!searchFlag)
+        {
+            questions = await DbContext.Questions.Skip(page * pageSize).Take(pageSize).ToListAsync();
+        }
+        else 
+        {
+            questions = await DbContext.Questions.Where(c => c.Type == typeKey).Skip(page * pageSize).Take(pageSize).ToListAsync();
+        }
     }
     protected override async Task OnInitializedAsync()
     {

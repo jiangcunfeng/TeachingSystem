@@ -69,12 +69,16 @@
 
     Question question;
 
-    async Task Save() {
+    async Task Save() 
+    {
         if(create) 
         {
-            if(await DbContext.Questions.Where(c => c.QuestionId == question.QuestionId).CountAsync() != 0) {
+            if(await DbContext.Questions.Where(c => c.QuestionId == question.QuestionId).CountAsync() != 0) 
+            {
                 Toaster.Add("The Id already exists, use another one", MatToastType.Danger);
-            }else {
+            }
+            else 
+            {
                 await DbContext.Questions.AddAsync(question);
                 await DbContext.SaveChangesAsync();
                 OnSave();
@@ -87,10 +91,14 @@
         }
     }
 
-    protected override async Task OnInitializedAsync() {
-        if(create) {
+    protected override async Task OnInitializedAsync() 
+    {
+        if(create) 
+        {
             question = new Question();
-        } else {
+        } 
+        else 
+        {
             question = await  DbContext.Questions.SingleAsync(c => c.QuestionId == id);
         }
     }
