@@ -11,7 +11,12 @@ namespace TeachingSystem.Data
     public class TSSDbContext : IdentityDbContext<User>
     {
 
+        public static class MyGlobals {
+            public static int Systemstate = 0; 
+            public static int MaxConnection = 100; 
+            public static int PresentConnection = 0; 
 
+        }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<ClassChoice> ClassChoices { get; set; }
@@ -20,7 +25,8 @@ namespace TeachingSystem.Data
         public DbSet<UserClasses> UserClasses { get; set; }
         public DbSet<Test> Tests { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
-
+        public DbSet<SpecialityCourse> SpecialityCourse { get; set; }
+        public DbSet<newClass> newClass { get; set; }
         public TSSDbContext(DbContextOptions<TSSDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
