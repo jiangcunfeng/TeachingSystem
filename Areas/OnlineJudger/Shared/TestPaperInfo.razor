@@ -1,0 +1,62 @@
+
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Identity;
+
+@inject IMatToaster Toaster
+
+@if (testPaper != null)
+{
+<EditForm Model="testPaper" OnValidSubmit="Save">
+    <DataAnnotationsValidator/>
+        <p>
+            <MatTextField Label="Id" @bind-Value="testPaper.TestPaperId" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="Name" @bind-Value="testPaper.Name" FullWidth="true"/>
+        </p>
+        @if (testPaper.Content != null)
+        {
+            foreach (var question in testPaper.Content)
+            {
+                <p>
+                    <MatTextField Label="QuestionId" @bind-Value="question.QuestionId" FullWidth="true" ReadOnly="true"/>
+                </p>
+            }
+        }
+        <p>
+            <MatTextField Label="Course" @bind-Value="testPaper.Course" FullWidth="true"/>
+        </p>
+        
+        <p style="text-align: center">
+            <MatButton Type="submit" Raised="true">Save</MatButton>
+        </p>
+            
+</EditForm>
+}
+
+@code {
+
+    [Parameter]
+    public bool admin {get;set;} = false;
+
+    [Parameter]
+    public string id {get;set;}
+
+    [Parameter]
+    public Action OnSave {get;set;}
+
+    TestPaper testPaper;
+
+    async Task Save() 
+    {
+        await DbContext.SaveChangesAsync();
+        OnSave();
+    }
+
+    protected override async Task OnInitializedAsync() 
+    {
+        testPaper = await  DbContext.TestPapers.SingleAsync(c => c.TestPaperId == id);
+    }
+} 

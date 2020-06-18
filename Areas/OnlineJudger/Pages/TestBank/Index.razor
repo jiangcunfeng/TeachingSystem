@@ -1,5 +1,7 @@
 @page "/online-judger/test-bank"
 
+@inject IMatToaster Toaster
+
 <div class="mat-layout-grid">
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
@@ -13,6 +15,8 @@
 
 <MatAutocompleteList Items="@options" TItem="string" Label="Search By Type" @bind-Value="@typeKey"></MatAutocompleteList>
 <MatButton OnClick="@Search" Label="Submit"></MatButton>
+<MatStringField Icon="assignment" ReadOnly="true" Value="@questionsSelected.Count.ToString()" Label="Questions Selected" IconOnClick="@ShowQuestionsSelected"></MatStringField>
+<MatButton OnClick="@(_ => {createDialogIsOpen=true;})" Label="Create"></MatButton>
 
 <table class="table">
     <thead>
@@ -39,7 +43,7 @@
                     <td>@question.Answer</td>
                     <td>@question.Course</td>
                     <td>@question.Point</td>
-                    <td><a href="/online-judger/test-bank/edit/@question.QuestionId">Edit</a>|<button type="button" class="btn btn-link" @onclick="@(_ => {questionToDelete=question;dialogIsOpen=true;})">Delete</button></td>
+                    <td><a href="/online-judger/test-bank/edit/@question.QuestionId">Edit</a>|<button type="button" class="btn btn-link" @onclick="@(_ => {questionToDelete=question;dialogIsOpen=true;})">Delete</button>|<button type="button" class="btn btn-link" @onclick="@(_ => {questionsSelected.Add(question);})">Select</button></td>
                 </tr>  
             }
         }
@@ -63,6 +67,19 @@
         </MatDialogActions>
     </MatDialog>
 
+    <MatDialog @bind-IsOpen="@createDialogIsOpen">
+        <MatDialogTitle>Create Test Paper</MatDialogTitle>
+        <MatDialogContent>
+            <p><MatTextField Label="Id" @bind-Value="testPaperId" FullWidth="true"/></p>
+            <p><MatTextField Label="Name" @bind-Value="testPaperName" FullWidth="true"/></p>
+            <p><MatTextField Label="Course" @bind-Value="testPaperCourse" FullWidth="true"/></p>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { createDialogIsOpen = false; })">Cancel</MatButton>
+            <MatButton OnClick="@CreateTestPaper">Create</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
 @code {
     int page = 0;
     int pageSize = 25;
@@ -73,6 +90,12 @@
     string[] options = new[] {"TrueOrFalse", "SingleChoice", "MultipleChoice"};
     string typeKey;
     bool searchFlag = false;
+    List<Question> questionsSelected = new List<Question>();
+    bool showQuestionsSelected = false;
+    bool createDialogIsOpen = false;
+    string testPaperId;
+    string testPaperName;
+    string testPaperCourse;
     async Task OnPage(MatPaginatorPageEvent e)
     {
         pageSize = e.PageSize;
@@ -97,16 +120,47 @@
         searchFlag = false;
         typeKey = null;
     }
+    async Task ShowQuestionsSelected()
+    {
+        showQuestionsSelected = !showQuestionsSelected;
+        await UpdateList();
+    }
     async Task UpdateList()
     {
-        if (!searchFlag)
-        {
-            questions = await DbContext.Questions.Skip(page * pageSize).Take(pageSize).ToListAsync();
-        }
-        else 
+        if (searchFlag)
         {
             questions = await DbContext.Questions.Where(c => c.Type == typeKey).Skip(page * pageSize).Take(pageSize).ToListAsync();
         }
+        else if (showQuestionsSelected)
+        {
+            questions = questionsSelected;
+        }
+        else 
+        {
+            questions = await DbContext.Questions.Skip(page * pageSize).Take(pageSize).ToListAsync();
+        }
+    }
+    async Task CreateTestPaper()
+    {
+        TestPaper newTestPaper = new TestPaper();
+        newTestPaper.TestPaperId = testPaperId;
+        newTestPaper.Name = testPaperName;
+        newTestPaper.Content = questionsSelected;
+        newTestPaper.Course = testPaperCourse;
+        if (await DbContext.TestPapers.Where(c => c.TestPaperId == newTestPaper.TestPaperId).CountAsync() != 0) 
+        {
+            Toaster.Add("The Id already exists, use another one", MatToastType.Danger);
+        }
+        else 
+        {
+            await DbContext.TestPapers.AddAsync(newTestPaper);
+            await DbContext.SaveChangesAsync();
+        }
+        testPaperId = null;
+        testPaperName = null;
+        questionsSelected = new List<Question>();
+        testPaperCourse = null;
+        createDialogIsOpen = false;
     }
     protected override async Task OnInitializedAsync()
     {

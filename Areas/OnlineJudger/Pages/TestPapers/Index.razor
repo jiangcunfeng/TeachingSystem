@@ -1,0 +1,82 @@
+@page "/online-judger/test-papers"
+
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-8">
+            <MatPaginator Length="@size" PageSize="@pageSize" Page="OnPage"></MatPaginator>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Course</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(testPapers != null)
+        {
+            foreach(var testPaper in testPapers)
+            {
+                <tr>
+                    <td>@testPaper.TestPaperId</td>
+                    <td>@testPaper.Name</td>
+                    <td>@testPaper.Course</td>
+                    <td><a href="/online-judger/test-papers/edit/@testPaper.TestPaperId">Edit</a>|<button type="button" class="btn btn-link" @onclick="@(_ => {testPaperToDelete=testPaper;dialogIsOpen=true;})">Delete</button></td>
+                </tr>  
+            }
+        }
+        else 
+        {
+            <div class="spinner-border" role="status">
+                <span class="sr-only">加载中……</span>
+            </div>
+        }
+    </tbody>
+</table>
+
+    <MatDialog @bind-IsOpen="@dialogIsOpen">
+        <MatDialogTitle>Delete Test Paper</MatDialogTitle>
+        <MatDialogContent>
+            <p>Delete @testPaperToDelete?.Name ?</p>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { dialogIsOpen = false; })">No</MatButton>
+            <MatButton OnClick="@DeleteTestPaper">Delete</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+@code {
+    int page = 0;
+    int pageSize = 25;
+    int size = 0;
+    bool dialogIsOpen = false;
+    IEnumerable<TestPaper> testPapers;
+    TestPaper testPaperToDelete = null;
+    async Task OnPage(MatPaginatorPageEvent e)
+    {
+        pageSize = e.PageSize;
+        page = e.PageIndex;
+        await UpdateList();
+        StateHasChanged();
+    }
+    async Task DeleteTestPaper() 
+    {
+        DbContext.TestPapers.Remove(testPaperToDelete);
+        await DbContext.SaveChangesAsync();
+        await UpdateList();
+        dialogIsOpen = false;
+    }
+    async Task UpdateList()
+    {
+        testPapers = await DbContext.TestPapers.Skip(page * pageSize).Take(pageSize).ToListAsync();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        size = await DbContext.TestPapers.CountAsync();
+        await UpdateList();
+    }
+}
