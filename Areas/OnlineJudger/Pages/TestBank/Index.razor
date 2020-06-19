@@ -5,7 +5,7 @@
 <div class="mat-layout-grid">
     <div class="mat-layout-grid-inner">
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
-            <MatButton Icon="add" Link="/online-judger/test-bank/create">Create Question</MatButton>
+            <MatButton OnClick="@(_ => {NavigationManager.NavigateTo("/online-judger/test-papers");})" Label="See Test Papers"></MatButton>
         </div>
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-8">
             <MatPaginator Length="@size" PageSize="@pageSize" Page="OnPage"></MatPaginator>
@@ -13,6 +13,7 @@
     </div>
 </div>
 
+<MatButton Icon="add" Link="/online-judger/test-bank/create">Create Question</MatButton>
 <MatAutocompleteList Items="@options" TItem="string" Label="Search By Type" @bind-Value="@typeKey"></MatAutocompleteList>
 <MatButton OnClick="@Search" Label="Submit"></MatButton>
 <MatStringField Icon="assignment" ReadOnly="true" Value="@questionsSelected.Count.ToString()" Label="Questions Selected" IconOnClick="@ShowQuestionsSelected"></MatStringField>

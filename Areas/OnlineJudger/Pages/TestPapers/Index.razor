@@ -2,6 +2,9 @@
 
 <div class="mat-layout-grid">
     <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+            <MatButton OnClick="@(_ => {NavigationManager.NavigateTo("/online-judger/tests");})" Label="See Tests"></MatButton>
+        </div>
         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-8">
             <MatPaginator Length="@size" PageSize="@pageSize" Page="OnPage"></MatPaginator>
         </div>
