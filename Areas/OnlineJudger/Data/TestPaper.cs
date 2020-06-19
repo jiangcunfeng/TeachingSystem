@@ -10,7 +10,7 @@ namespace TeachingSystem.Data
         [Required]
         public string Name {get; set;}
         [Required]
-        public List<Question> Content {get; set;}
+        public string[] Content {get; set;}
         public string Course {get; set;}  // Which course this test paper belongs to
     }
 }

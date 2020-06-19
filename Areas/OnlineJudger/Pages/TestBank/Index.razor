@@ -145,7 +145,13 @@
         TestPaper newTestPaper = new TestPaper();
         newTestPaper.TestPaperId = testPaperId;
         newTestPaper.Name = testPaperName;
-        newTestPaper.Content = questionsSelected;
+        newTestPaper.Content = new string[questionsSelected.Count];
+        int index = 0;
+        foreach (var questionSelected in questionsSelected)
+        {
+            newTestPaper.Content[index] = questionSelected.QuestionId;
+            index++;
+        }
         newTestPaper.Course = testPaperCourse;
         if (await DbContext.TestPapers.Where(c => c.TestPaperId == newTestPaper.TestPaperId).CountAsync() != 0) 
         {

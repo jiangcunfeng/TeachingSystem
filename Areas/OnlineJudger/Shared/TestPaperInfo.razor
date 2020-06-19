@@ -18,10 +18,11 @@
         </p>
         @if (testPaper.Content != null)
         {
-            foreach (var question in testPaper.Content)
+            foreach (var questionId in testPaper.Content)
             {
+                string tempId = questionId;
                 <p>
-                    <MatTextField Label="QuestionId" @bind-Value="question.QuestionId" FullWidth="true" ReadOnly="true"/>
+                    <MatTextField Label="QuestionId" @bind-Value="@tempId" FullWidth="true" ReadOnly="true"/>
                 </p>
             }
         }

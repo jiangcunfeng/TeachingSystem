@@ -10,7 +10,7 @@ using TeachingSystem.Data;
 namespace TeachingSystem.Migrations
 {
     [DbContext(typeof(TSSDbContext))]
-    [Migration("20200617073037_OnlineJudger1")]
+    [Migration("20200619074925_OnlineJudger1")]
     partial class OnlineJudger1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,29 +49,29 @@ namespace TeachingSystem.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "16bcf8f0-d3ef-4878-ab4f-8bf57e5f72cc",
-                            ConcurrencyStamp = "c6459d14-41fc-48d2-a1e2-06201128f204",
+                            Id = "a9d833f0-bbcc-4229-b965-abbc21f97911",
+                            ConcurrencyStamp = "fb0a55f6-4340-417b-99ac-1b1c28365bda",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "95b549b7-2252-4d87-9c1a-80c1ac335194",
-                            ConcurrencyStamp = "ab20bfdc-16b8-47b1-9670-7bd7fe23e009",
+                            Id = "9012aa47-f443-4d24-ba23-a853beffcd3d",
+                            ConcurrencyStamp = "3258cf4b-446c-4871-a72f-16df431b0719",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = "90e1eb79-29c6-4ac4-b236-17d941d3ef3c",
-                            ConcurrencyStamp = "f0b22560-aa65-4348-83a6-8bddcf87d414",
+                            Id = "0834156d-21b3-4b00-a86e-2bbcec997a33",
+                            ConcurrencyStamp = "0afbf03b-0471-4b84-a3ea-150774114abe",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = "f6a18f83-18b0-41f6-86c6-5c888bb2eb01",
-                            ConcurrencyStamp = "d75e52ed-2d00-4b1c-91cd-50220eac5a75",
+                            Id = "d891b992-238e-4abe-9a54-7d357c9adf62",
+                            ConcurrencyStamp = "e9adeb7b-0dc1-4d37-99b2-f9db3eecd20c",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         });
@@ -336,16 +336,11 @@ namespace TeachingSystem.Migrations
                     b.Property<string>("Point")
                         .HasColumnType("text");
 
-                    b.Property<string>("TestPaperId")
-                        .HasColumnType("text");
-
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("QuestionId");
-
-                    b.HasIndex("TestPaperId");
 
                     b.ToTable("Questions");
                 });
@@ -354,6 +349,10 @@ namespace TeachingSystem.Migrations
                 {
                     b.Property<string>("TestPaperId")
                         .HasColumnType("text");
+
+                    b.Property<string[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("text[]");
 
                     b.Property<string>("Course")
                         .HasColumnType("text");
@@ -559,13 +558,6 @@ namespace TeachingSystem.Migrations
                     b.HasOne("TeachingSystem.Data.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("TeachingSystem.Data.Question", b =>
-                {
-                    b.HasOne("TeachingSystem.Data.TestPaper", null)
-                        .WithMany("Content")
-                        .HasForeignKey("TestPaperId");
                 });
 
             modelBuilder.Entity("TeachingSystem.Data.User", b =>
