@@ -11,7 +11,7 @@
 <EditForm Model="testPaper" OnValidSubmit="Save">
     <DataAnnotationsValidator/>
         <p>
-            <MatTextField Label="Id" @bind-Value="testPaper.TestPaperId" FullWidth="true"/>
+            <MatTextField Label="Id" @bind-Value="testPaper.TestPaperId" FullWidth="true" ReadOnly="true"/>
         </p>
         <p>
             <MatTextField Label="Name" @bind-Value="testPaper.Name" FullWidth="true"/>
