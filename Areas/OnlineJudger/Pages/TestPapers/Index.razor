@@ -28,7 +28,7 @@
                     <td>@testPaper.TestPaperId</td>
                     <td>@testPaper.Name</td>
                     <td>@testPaper.Course</td>
-                    <td><a href="/online-judger/test-papers/edit/@testPaper.TestPaperId">Edit</a>|<button type="button" class="btn btn-link" @onclick="@(_ => {testPaperToDelete=testPaper;dialogIsOpen=true;})">Delete</button></td>
+                    <td><a href="/online-judger/test-papers/edit/@testPaper.TestPaperId">Edit</a>|<button type="button" class="btn btn-link" @onclick="@(_ => {testPaperToDelete=testPaper;dialogIsOpen=true;})">Delete</button>|<a href="/online-judger/test-papers/show/@testPaper.TestPaperId">show</a></td>
                 </tr>  
             }
         }
