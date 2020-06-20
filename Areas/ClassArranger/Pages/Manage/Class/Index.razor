@@ -446,14 +446,14 @@
     }
     async Task UpdateList()
     {
-        classes = await DbContext.Classes.Include("Course").Include("Classroom").Skip(page * pageSize).Take(pageSize).ToListAsync();
+        classes = await DbContext.Classes.Include("Course").Include("Classroom").Include("Teacher").Skip(page * pageSize).Take(pageSize).ToListAsync();
     }
 
     protected override async Task OnInitializedAsync()
     {
         size = await DbContext.Classes.CountAsync();
 
-        if (size == 0)  // 随机生成教学班
+        if (size == 0 && false)  // 随机生成教学班
         {  
             // 查询所有课程
             List<Course> allCourses = DbContext.Courses.ToList();

@@ -336,7 +336,7 @@
             _class = new Class();
 
         } else {
-            _class = await DbContext.Classes.Include("Classroom").Include("Course").SingleAsync(c => c.ClassId == id);
+            _class = await DbContext.Classes.Include("Classroom").Include("Course").Include("Teacher").SingleAsync(c => c.ClassId == id);
             
             courseProperty = _class.Course;
             classroomProperty = _class.Classroom;
