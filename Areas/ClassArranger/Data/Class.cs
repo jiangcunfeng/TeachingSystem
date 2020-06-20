@@ -23,7 +23,14 @@ namespace TeachingSystem.Data
         // 选上的学生
         public List<User> Students {get;set;}
 
-        // 我只写了可能跟其他子系统产生联系的部分，其他请自行添加
+        // 上课的教室
+        public Classroom Classroom { get; set; }
 
+        // 每周的上课时间
+        // 七个二进制数表示该时间段是否上课
+        public List<int> TeachTime { get; set; }
+
+        // 考试时间
+        public string TestTime {get; set;}
     }
 }
