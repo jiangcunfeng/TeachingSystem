@@ -6,6 +6,8 @@
 
 @inject IMatToaster Toaster
 
+@if (course != null) 
+{
 <EditForm Model="course" OnValidSubmit="Save">
     <DataAnnotationsValidator/>
         <p>
@@ -37,7 +39,7 @@
         </p>
             
 </EditForm>
-
+}
 
  
 @code {

@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace TeachingSystem.Migrations
 {
-    public partial class Init : Migration
+    public partial class OnlineJudger1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -36,6 +36,41 @@ namespace TeachingSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.CourseId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Questions",
+                columns: table => new
+                {
+                    QuestionId = table.Column<string>(nullable: false),
+                    Type = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Content = table.Column<string>(nullable: false),
+                    ChoiceA = table.Column<string>(nullable: true),
+                    ChoiceB = table.Column<string>(nullable: true),
+                    ChoiceC = table.Column<string>(nullable: true),
+                    ChoiceD = table.Column<string>(nullable: true),
+                    Answer = table.Column<string>(nullable: false),
+                    Course = table.Column<string>(nullable: true),
+                    Point = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Questions", x => x.QuestionId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestPapers",
+                columns: table => new
+                {
+                    TestPaperId = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Content = table.Column<string[]>(nullable: false),
+                    Course = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestPapers", x => x.TestPaperId);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,25 +225,6 @@ namespace TeachingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tests",
-                columns: table => new
-                {
-                    TestId = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ClassId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tests", x => x.TestId);
-                    table.ForeignKey(
-                        name: "FK_Tests_Classes_ClassId",
-                        column: x => x.ClassId,
-                        principalTable: "Classes",
-                        principalColumn: "ClassId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -254,32 +270,6 @@ namespace TeachingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TestResults",
-                columns: table => new
-                {
-                    TestResultId = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TestId = table.Column<long>(nullable: true),
-                    UserId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestResults", x => x.TestResultId);
-                    table.ForeignKey(
-                        name: "FK_TestResults_Tests_TestId",
-                        column: x => x.TestId,
-                        principalTable: "Tests",
-                        principalColumn: "TestId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TestResults_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PostReplies",
                 columns: table => new
                 {
@@ -310,10 +300,10 @@ namespace TeachingSystem.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "535a2475-a5a8-41af-b0c2-1056f3904bba", "033deb12-2663-4a8b-8d93-2f2be0670686", "Admin", "ADMIN" },
-                    { "15d682dd-0514-42d1-844c-e94a7a1ac62f", "212bc4d6-1474-4952-8393-920901dd069b", "Teacher", "TEACHER" },
-                    { "a230dbc9-e4de-4184-9338-9d5b26a56020", "0ec43f15-a6b9-4334-91de-f8c561b5dd90", "Student", "STUDENT" },
-                    { "7caf6577-754b-4bd1-aa15-dbd79589a4c8", "63f6ade5-38dd-490b-8f9d-c2ba766339d9", "Manager", "MANAGER" }
+                    { "4c1cb159-2fb9-4d25-b26a-244553862ea1", "1b4eceea-7352-48ca-9ddd-a2c88cd2936d", "Admin", "ADMIN" },
+                    { "ec28755e-2ef1-494f-a1be-937c0e52ff74", "d596329b-6510-4918-b134-347c68749ee8", "Teacher", "TEACHER" },
+                    { "63fe8932-5754-41bb-adce-c4c1b23e2f4a", "540fcf1a-3d5f-4687-8e56-b759f9abb5b7", "Student", "STUDENT" },
+                    { "764d1800-64e8-4f7d-a7f1-6894f00aec3a", "df7f3594-f860-47a4-843a-56865814e350", "Manager", "MANAGER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -402,21 +392,6 @@ namespace TeachingSystem.Migrations
                 name: "IX_Posts_UserId",
                 table: "Posts",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestResults_TestId",
-                table: "TestResults",
-                column: "TestId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestResults_UserId",
-                table: "TestResults",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tests_ClassId",
-                table: "Tests",
-                column: "ClassId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClasses_UserId",
@@ -520,16 +495,16 @@ namespace TeachingSystem.Migrations
                 name: "PostReplies");
 
             migrationBuilder.DropTable(
-                name: "TestResults");
+                name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "TestPapers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Posts");
-
-            migrationBuilder.DropTable(
-                name: "Tests");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

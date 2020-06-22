@@ -1,0 +1,23 @@
+@page "/online-judger/test-bank/edit/{id}"
+
+@using TeachingSystem.Areas.OnlineJudger.Shared
+
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell"></div>
+        <div class="mat-layout-grid-cell">
+            <h1>Edit Question</h1>
+            <QuestionInfo id="@Id" admin="true" OnSave="OnSave"></QuestionInfo>
+        </div>
+        <div class="mat-layout-grid-cell"></div>
+    </div>
+</div>
+ 
+@code {
+    [Parameter]
+    public string Id {get;set;}
+    void OnSave() 
+    {
+        NavigationManager.NavigateTo("/online-judger/test-bank");
+    }
+}

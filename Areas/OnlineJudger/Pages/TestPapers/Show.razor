@@ -1,0 +1,92 @@
+@page "/online-judger/test-papers/show/{id}"
+
+@using TeachingSystem.Areas.OnlineJudger.Shared
+@if (name != null){
+<h1>考试：@name </h1>
+}
+@if (course != null){
+<h4>科目：@course</h4>
+}
+<h4>本测试允许1次尝试</h4>
+<h4>本测试可保存并随时继续，直到时间结束</h4>
+@if (testPaper != null)
+{
+    num = 1;
+    @foreach(Question question in question_list)
+    {
+        var localnum = num;
+        switch(question.Type){
+            case "TrueOrFalse":
+                <MatRadioGroup @bind-Value="@Val1" TValue="string">
+                    <div> @localnum: @question.Content </div>
+                    <div ><MatRadioButton Value="@("True")" TValue="string">True</MatRadioButton></div>
+                    <div ><MatRadioButton Value="@("False")" TValue="string">False </MatRadioButton></div>
+                </MatRadioGroup>
+            break;
+            case "SingleChoice":
+                <MatRadioGroup @bind-Value="@Val2" TValue="string">
+                    <div> @localnum @question.Content (Single Choice) </div>
+                    <div><MatRadioButton Value="@("A")" TValue="string">A. @question.ChoiceA</MatRadioButton></div>
+                    <div><MatRadioButton Value="@("B")" TValue="string">B. @question.ChoiceB</MatRadioButton></div>
+                    <div><MatRadioButton Value="@("C")" TValue="string">C. @question.ChoiceC</MatRadioButton></div>
+                    <div><MatRadioButton Value="@("D")" TValue="string">D. @question.ChoiceD</MatRadioButton></div>
+                </MatRadioGroup>
+            break;
+            case "MultipleChoice":
+               
+                <div> @localnum: @question.Content (Multiple Choice) </div>
+                <div><MatCheckbox @bind-Value="@Val4">A. @question.ChoiceA</MatCheckbox></div>
+                <div><MatCheckbox @bind-Value="@Val5">B. @question.ChoiceB</MatCheckbox></div>
+                <div><MatCheckbox @bind-Value="@Val6">C. @question.ChoiceC</MatCheckbox></div>
+                <div><MatCheckbox @bind-Value="@Val7">D. @question.ChoiceD</MatCheckbox></div>
+               
+                break; 
+        }
+        num = num + 1;   
+    }
+  <MatButton OnClick="@(_ => {NavigationManager.NavigateTo("/online-judger/test-papers");})" Label="Back"></MatButton>
+  <MatButton OnClick="@(_ => {NavigationManager.NavigateTo("/online-judger/test-papers");})" Label="Save"></MatButton>
+
+}
+
+@code {
+
+    [Parameter]
+    public bool admin {get;set;} = false;
+
+    [Parameter]
+    public string id {get;set;}
+    public int num {get;set;}
+    public string Val1{get;set;}
+    public string Val2{get;set;}
+    public string Val3{get;set;}
+    public bool  Val4{get;set;}
+    public bool  Val5{get;set;}
+    public bool  Val6{get;set;}
+    public bool  Val7{get;set;}
+    public string course{get;set;}
+    public string name{get;set;}
+    [Parameter]
+    public Action OnSave {get;set;}
+
+    TestPaper testPaper;
+    List<Question> question_list = new List<Question>();
+    async Task Save() 
+    {
+        await DbContext.SaveChangesAsync();
+        OnSave();
+    }
+
+    protected override async Task OnInitializedAsync() 
+    {
+        testPaper = await  DbContext.TestPapers.SingleAsync(c => c.TestPaperId == id);
+        course = testPaper.Course;
+        name = testPaper.Name;
+        if (testPaper != null)
+        {
+            foreach(String id in testPaper.Content){
+               question_list.Add(await DbContext.Questions.SingleAsync(c => c.QuestionId == id));
+            }
+        }
+    }
+} 

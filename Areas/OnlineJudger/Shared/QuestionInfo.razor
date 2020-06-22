@@ -1,0 +1,105 @@
+
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Identity;
+
+@inject IMatToaster Toaster
+
+@if (question != null)
+{
+<EditForm Model="question" OnValidSubmit="Save">
+    <DataAnnotationsValidator/>
+        <p>
+            <MatTextField Label="Id" @bind-Value="question.QuestionId" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="Type" @bind-Value="question.Type" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="Name" @bind-Value="question.Name" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="Content" @bind-Value="question.Content" FullWidth="true"/>
+        </p>
+        @if (question != null && (question.Type == "SingleChoice" || question.Type == "MultipleChoice"))
+        {
+        <p>
+            <MatTextField Label="ChoiceA" @bind-Value="question.ChoiceA" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="ChoiceB" @bind-Value="question.ChoiceB" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="ChoiceC" @bind-Value="question.ChoiceC" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="ChoiceD" @bind-Value="question.ChoiceD" FullWidth="true"/>
+        </p>
+        }
+        <p>
+            <MatTextField  Label="Answer" @bind-Value="question.Answer" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="Course" @bind-Value="question.Course" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="KnowledgePoint" @bind-Value="question.Point" FullWidth="true"/>
+        </p>
+        
+        <p style="text-align: center">
+            <MatButton Type="submit" Raised="true">Save</MatButton>
+        </p>
+            
+</EditForm>
+}
+
+@code {
+    [Parameter]
+    public bool create {get;set;} = false;
+
+    [Parameter]
+    public bool admin {get;set;} = false;
+
+    [Parameter]
+    public string id {get;set;}
+
+    [Parameter]
+    public Action OnSave {get;set;}
+
+    Question question;
+
+    async Task Save() 
+    {
+        if(create) 
+        {
+            if(await DbContext.Questions.Where(c => c.QuestionId == question.QuestionId).CountAsync() != 0) 
+            {
+                Toaster.Add("The Id already exists, use another one", MatToastType.Danger);
+            }
+            else 
+            {
+                await DbContext.Questions.AddAsync(question);
+                await DbContext.SaveChangesAsync();
+                OnSave();
+            }
+        }
+        else
+        {
+            await DbContext.SaveChangesAsync();
+            OnSave();
+        }
+    }
+
+    protected override async Task OnInitializedAsync() 
+    {
+        if(create) 
+        {
+            question = new Question();
+        } 
+        else 
+        {
+            question = await  DbContext.Questions.SingleAsync(c => c.QuestionId == id);
+        }
+    }
+} 
