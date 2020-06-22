@@ -1,0 +1,197 @@
+@page "/CourseElective/Manage/Admin"
+
+@attribute [Authorize(Roles = "Admin")]
+
+<MatTabGroup>
+    <MatTab Label="手动添加课程">
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell"></div>
+                <div class="mat-layout-grid-cell">
+                    <div class="text-field-container">
+                        <MatTextField @bind-Value="@StudentName" Label="学生姓名" Outlined="true"></MatTextField>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div class="text-field-container" width = "100%">
+                        <MatTextField @bind-Value="@ClassId" Label="课号" Outlined="true"></MatTextField>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div class="text-field-container">
+                        <MatTextField @bind-Value="@ClassName" Label="课程名称" Outlined="true"></MatTextField>
+                    </div>
+                    <br/>
+                    <br/>
+                    <MatButton Raised="true" color="accent" OnClick="@Click">@AddButtonState</MatButton>
+                </div>
+        </div>
+    </div>
+        <div class="mat-layout-grid-cell"></div>
+    </MatTab>
+    <MatTab Label="控制选课开放">
+        <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell"></div>
+                <div class="mat-layout-grid-cell">
+                    <tr>
+                        <th>当前系统状态:</th>
+                        <th>@PresentSystemState</th>
+                    </tr>
+                    <MatSelectValue @bind-Value="System_State" Items="@SystemState" ValueSelector="@(i=>i.Name)">
+                        <ItemTemplate>
+                            <span style="color: @context.Color">@context?.Name</span>
+                        </ItemTemplate>
+                    </MatSelectValue>
+                    <br/>
+                    <br/>
+                    <MatButton Raised="true" OnClick="@Click1">@ControlButtonState</MatButton>
+                </div>
+        </div>
+    </div>
+    </MatTab>
+    <MatTab Label="控制链接数量">
+        <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell"></div>
+                <div class="mat-layout-grid-cell">
+                    <tr>
+                        <th>当前最大链接数:</th>
+                        <th>@NowMaxConnectionNum</th>
+                        <th>    当前链接数:</th>
+                        <th>@PresentConnection</th>
+                    </tr>
+                    <div class="text-field-container">
+                        <MatTextField @bind-Value="@_ConnectionNum" Label="链接数量" Outlined="true"></MatTextField>
+                    </div>
+                    <br/>
+                    <br/>
+                    <MatButton Raised="true" OnClick="@Click2">@ConnectionButtonState</MatButton>
+                </div>
+        </div>
+    </div>    
+    </MatTab>
+
+</MatTabGroup>
+
+
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        if(TSSDbContext.MyGlobals.Systemstate == 0){
+            PresentSystemState = "关闭";
+        }
+        else if(TSSDbContext.MyGlobals.Systemstate == 1){
+            PresentSystemState = "选课";
+        }
+        else if(TSSDbContext.MyGlobals.Systemstate == 2){
+            PresentSystemState = "补选";
+        }
+        NowMaxConnectionNum = TSSDbContext.MyGlobals.MaxConnection.ToString();
+        base.OnInitialized();
+    }
+    int PresentConnection = TSSDbContext.MyGlobals.PresentConnection;
+    public string StudentName
+            {
+                get => _StudentName;
+                set
+                {
+                    _StudentName = value;
+                    this.StateHasChanged();
+                }
+            }
+ 
+        private string _StudentName;
+
+    public string ClassId
+    {
+        get => _ClassId;
+        set
+        {
+            _ClassId = value;
+            this.StateHasChanged();
+        }
+    }
+
+        private string _ClassId;
+
+    public string ClassName
+            {
+                get => _ClassName;
+                set
+                {
+                    _ClassName = value;
+                    this.StateHasChanged();
+                }
+            }
+ 
+        private string _ClassName;
+
+    
+    public string ConnectionNum
+            {
+                get => _ConnectionNum;
+                set
+                {
+                    _ConnectionNum = value;
+                    
+                    this.StateHasChanged();
+                }
+            }
+ 
+        private string _ConnectionNum;
+    
+    string AddButtonState = "提交";   
+            void Click(MouseEventArgs e)
+            {
+                AddButtonState = "提交"; 
+            }
+    string PresentSystemState = "";
+    string System_State = "";
+    string ControlButtonState = "修改";
+             void Click1(MouseEventArgs e)
+            {
+                if(System_State == "关闭"){
+                    TSSDbContext.MyGlobals.Systemstate = 0;
+                }
+                else if(System_State == "选课"){
+                    TSSDbContext.MyGlobals.Systemstate = 1;
+                }
+                else if(System_State == "补选"){
+                    TSSDbContext.MyGlobals.Systemstate = 2;
+                }
+                PresentSystemState = System_State;
+                ControlButtonState = "修改";
+                
+            }
+    public string NowMaxConnectionNum = "";
+    string ConnectionButtonState = "提交修改";
+            void Click2(MouseEventArgs e)
+            {
+                ConnectionButtonState = "提交修改";
+                NowMaxConnectionNum = ConnectionNum;
+                TSSDbContext.MyGlobals.MaxConnection = int.Parse(ConnectionNum);
+            }
+
+    SystemStateType[] SystemState = new[]
+            {
+                new SystemStateType("关闭", "black"),
+                new SystemStateType("选课", "green"),
+                new SystemStateType("补选", "green"),
+            };
+ 
+            class SystemStateType
+            {
+                public string Name { get; }
+                public string Color { get; }
+ 
+                public SystemStateType(string name, string color)
+                {
+                    Name = name;
+                    Color = color;
+                }
+            }
+
+}

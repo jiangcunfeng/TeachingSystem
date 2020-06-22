@@ -17,7 +17,10 @@ namespace TeachingSystem.Data
         public string Belong { get; set; }
         public string Sex { get; set; }
 
-
+        public override string ToString()
+        {
+            return Name;
+        }
 
     }
 }
