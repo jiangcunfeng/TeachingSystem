@@ -1,0 +1,87 @@
+
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Identity;
+
+@inject IMatToaster Toaster
+
+@if (test != null)
+{
+<EditForm Model="test" OnValidSubmit="Save">
+    <DataAnnotationsValidator/>
+        <p>
+            <MatTextField Label="Id" @bind-Value="test.TestId" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="Test Name" @bind-Value="test.Name" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="Class" @bind-Value="test.className" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField  Label="Test Paper Id" @bind-Value="test.TestPaperId" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="start time" @bind-Value="test.start_time" FullWidth="true"/>
+        </p>
+        <p>
+            <MatTextField Label="end time" @bind-Value="test.end_time" FullWidth="true"/>
+        </p>
+        
+        <p style="text-align: center">
+            <MatButton Type="submit" Raised="true">Save</MatButton>
+        </p>
+            
+</EditForm>
+}
+
+@code {
+    [Parameter]
+    public bool create {get;set;} = false;
+
+    [Parameter]
+    public bool admin {get;set;} = false;
+
+    [Parameter]
+    public string id {get;set;}
+
+    [Parameter]
+    public Action OnSave {get;set;}
+
+    Test test;
+
+    async Task Save() 
+    {
+        if(create) 
+        {
+            if(await DbContext.Tests.Where(c => c.TestId == test.TestId).CountAsync() != 0) 
+            {
+                Toaster.Add("The Id already exists, use another one", MatToastType.Danger);
+            }
+            else 
+            {
+                await DbContext.Tests.AddAsync(test);
+                await DbContext.SaveChangesAsync();
+                OnSave();
+            }
+        }
+        else
+        {
+            await DbContext.SaveChangesAsync();
+            OnSave();
+        }
+    }
+
+    protected override async Task OnInitializedAsync() 
+    {
+        if(create) 
+        {
+            test = new Test();
+        } 
+        else 
+        {
+            test = await  DbContext.Tests.SingleAsync(c => c.TestId == id);
+        }
+    }
+} 

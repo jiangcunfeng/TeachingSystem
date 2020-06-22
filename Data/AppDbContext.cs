@@ -25,6 +25,8 @@ namespace TeachingSystem.Data
         public DbSet<UserClasses> UserClasses { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<TestPaper> TestPapers { get; set; }
+        public DbSet<Test> Tests { get; set; }
+        public DbSet<TestResult> TestResults { get; set; }
         public DbSet<SpecialityCourse> SpecialityCourse { get; set; }
         public DbSet<newClass> newClass { get; set; }
 

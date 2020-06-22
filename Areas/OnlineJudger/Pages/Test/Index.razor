@@ -1,0 +1,170 @@
+@page "/online-judger/tests"
+
+@inject IMatToaster Toaster
+
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-8">
+            <MatPaginator Length="@size" PageSize="@pageSize" Page="OnPage"></MatPaginator>
+        </div>
+    </div>
+</div>
+
+<MatButton Icon="add" Link="/online-judger/tests/create">Create Tests</MatButton>
+
+@*  TestId {get; set;}
+    Name {get; set;}
+    className {get; set;}
+    TestPaperId {get; set;}
+    start_time {get; set;}
+    end_time {get; set;} 
+*@
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Test Id</th>
+            <th scope="col">Class</th>
+            <th scope="col">Name</th>
+            <th scope="col">Test Paper Id</th>
+            <th scope="col">start time</th>
+            <th scope="col">end time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(tests != null)
+        {
+            foreach(var test in tests)
+            {
+                
+                <tr>
+                    <td>@test.TestId</td>
+                    <td>@test.className</td>
+                    <td>@test.Name</td>
+                    <td>@test.TestPaperId</td>
+                    <td>@test.start_time</td>
+                    <td>@test.end_time</td>
+                    <td><a href="/online-judger/tests/edit/@test.TestId">Edit</a>|<button type="button" class="btn btn-link" @onclick="@(_ => {testToDelete=test;dialogIsOpen=true;})">Delete</button>|<a href="/online-judger/tests/show/@test.TestId">show</a></td>
+                </tr>  
+            }
+        }
+        else 
+        {
+            <div class="spinner-border" role="status">
+                <span class="sr-only">加载中……</span>
+            </div>
+        }
+    </tbody>
+</table>
+
+    <MatDialog @bind-IsOpen="@dialogIsOpen">
+        <MatDialogTitle>Delete Question</MatDialogTitle>
+        <MatDialogContent>
+            <p>Delete @testToDelete?.Name ?</p>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { dialogIsOpen = false; })">No</MatButton>
+            <MatButton OnClick="@DeleteTest">Delete</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+    <MatDialog @bind-IsOpen="@createDialogIsOpen">
+        <MatDialogTitle>Create Test Paper</MatDialogTitle>
+        <MatDialogContent>
+            <p><MatTextField Label="Id" @bind-Value="testId" FullWidth="true"/></p>
+            <p><MatTextField Label="Test Name" @bind-Value="testName" FullWidth="true"/></p>
+            <p><MatTextField Label="Course" @bind-Value="testclassName" FullWidth="true"/></p>
+            <p><MatTextField Label="Test Paper Id" @bind-Value="TestPaperId" FullWidth="true"/></p>
+            <p><MatTextField Label="start time" @bind-Value="start_time" FullWidth="true"/></p>
+            <p><MatTextField Label="end time" @bind-Value="end_time" FullWidth="true"/></p>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { createDialogIsOpen = false; })">Cancel</MatButton>
+            <MatButton OnClick="@CreateTest">Create</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+@code {
+    int page = 0;
+    int pageSize = 25;
+    int size = 0;
+    bool dialogIsOpen = false;
+    IEnumerable<Test> tests;
+    Test testToDelete = null;
+   
+    bool searchFlag = false;
+    List<Test> testsSelected = new List<Test>();
+    bool showTestsSelected = false;
+    bool createDialogIsOpen = false;
+   
+    string testId;
+    string testName;
+    string testclassName;
+    string TestPaperId;
+    string start_time;
+    string end_time;
+    async Task OnPage(MatPaginatorPageEvent e)
+    {
+        pageSize = e.PageSize;
+        page = e.PageIndex;
+        await UpdateList();
+        StateHasChanged();
+    }
+    async Task DeleteTest() 
+    {
+        DbContext.Tests.Remove(testToDelete);
+        await DbContext.SaveChangesAsync();
+        await UpdateList();
+        dialogIsOpen = false;
+    }
+    
+    async Task UpdateList()
+    {
+        if (searchFlag)
+        {
+           // tests = await DbContext.Tests.Where(c => c.Type == typeKey).Skip(page * pageSize).Take(pageSize).ToListAsync();
+        }
+        else if (showTestsSelected)
+        {
+            tests = testsSelected;
+        }
+        else 
+        {
+            tests = await DbContext.Tests.Skip(page * pageSize).Take(pageSize).ToListAsync();
+        }
+    }
+    async Task CreateTest()
+    {
+        Test newTest = new Test();
+        newTest.TestId = testId;
+        newTest.Name = testName;
+        newTest.className = testclassName;
+        newTest.TestPaperId = TestPaperId;
+        newTest.start_time = start_time;
+        newTest.end_time = end_time;
+       
+        if (await DbContext.Tests.Where(c => c.TestId == newTest.TestId).CountAsync() != 0) 
+        {
+            Toaster.Add("The Id already exists, use another one", MatToastType.Danger);
+        }
+        else 
+        {
+            await DbContext.Tests.AddAsync(newTest);
+            await DbContext.SaveChangesAsync();
+        }
+        
+        TestPaperId = null;
+        start_time = null;
+        end_time = null;
+        testId = null;
+        testName = null;
+        testsSelected = new List<Test>();
+        testclassName = null;
+        createDialogIsOpen = false;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        size = await DbContext.Tests.CountAsync();
+        await UpdateList();
+    }
+}
