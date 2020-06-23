@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace TeachingSystem.Migrations
 {
-    public partial class SomeName : Migration
+    public partial class OnlineJudger1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -97,7 +97,8 @@ namespace TeachingSystem.Migrations
                 {
                     TestResultId = table.Column<string>(nullable: false),
                     TestPaperId = table.Column<string>(nullable: true),
-                    StudentId = table.Column<string>(nullable: true)
+                    StudentId = table.Column<string>(nullable: true),
+                    Score = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -397,10 +398,10 @@ namespace TeachingSystem.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "05ccc701-f09e-46c4-b826-e1b98098e3cb", "19640505-e50b-4a78-927b-2cdc4d2a9731", "Admin", "ADMIN" },
-                    { "e82a84e4-2ca2-4220-8f30-8e0a2afabc15", "bcec6194-8b53-4639-a5dc-9d1d0507c468", "Teacher", "TEACHER" },
-                    { "74af2655-5e31-4f9a-a443-7fce399e6f1e", "f444ba03-2be3-4fad-a9c2-f28aa5cbe288", "Student", "STUDENT" },
-                    { "8a888c12-065d-4688-ae6e-dc6831e69e6c", "f2bb29b3-69fb-497d-afbd-cb56b8ec7229", "Manager", "MANAGER" }
+                    { "bd0808a6-e59d-4f1b-aead-19c4578b1e7f", "b22943f7-2706-47a2-b123-e687de6ac5b7", "Admin", "ADMIN" },
+                    { "5ca32715-04ee-4adb-b982-d2d54a1cabe9", "6509e2cc-2187-43cd-8284-fd1f01ade647", "Teacher", "TEACHER" },
+                    { "13f12e3d-8187-44f5-bd14-b06f4901df74", "6a680cdc-7bc6-4390-8869-72e68fcb22f7", "Student", "STUDENT" },
+                    { "4b0f4f44-86bd-4215-9450-5ef682e1d2cb", "c172af72-beb3-43b5-969a-2b128c2e6591", "Manager", "MANAGER" }
                 });
 
             migrationBuilder.CreateIndex(
