@@ -80,6 +80,8 @@ else{
     public Action OnSave {get;set;}
     public Dictionary<string, string> QA_temp = new Dictionary<string, string>();
     TestPaper testPaper;
+
+    TestResult zmtest;
     Test test;
     List<Question> question_list = new List<Question>();
     //按 Save之后存到数据库
@@ -94,20 +96,19 @@ else{
        foreach(Question question in question_list){
            switch(question.Type){
             case "TrueOrFalse":
-            testResult.QA.Add(question.QuestionId,ValTF[i]);
-            break;
+                testResult.QA.Add(question.QuestionId,ValTF[i]);
+                break;
             case "SingleChoice":
-            testResult.QA.Add(question.QuestionId,ValSC[i]);
-            break;
+                testResult.QA.Add(question.QuestionId,ValSC[i]);
+                break;
             case "MultipleChoice":
-            ValMC[i] = "";
-            if (ValA[i])  ValMC[i] += "A";
-            if (ValB[i])  ValMC[i] += "B";
-            if (ValC[i])  ValMC[i] += "C";
-            if (ValD[i])  ValMC[i] += "D";
-            testResult.QA.Add(question.QuestionId, ValMC[i]);
-            
-            break;
+                ValMC[i] = "";
+                if (ValA[i])  ValMC[i] += "A";
+                if (ValB[i])  ValMC[i] += "B";
+                if (ValC[i])  ValMC[i] += "C";
+                if (ValD[i])  ValMC[i] += "D";
+                testResult.QA.Add(question.QuestionId, ValMC[i]);
+                break;
            }
            i = i + 1;
        }
@@ -118,9 +119,18 @@ else{
         }
         else 
         {
-            
+            int score=0;
+            foreach(KeyValuePair<string, string> dic in testResult.QA){
+                var question = DbContext.Questions.Single(c => c.QuestionId == dic.Key);
+                if(question.Answer == dic.Value){
+                    score += (int)(Convert.ToDouble(question.Point));
+                }
+            }
+            testResult.Score = score.ToString();
+
             await DbContext.TestResults.AddAsync(testResult);
             await DbContext.SaveChangesAsync();
+
         }
         
         NavigationManager.NavigateTo("/online-judger/tests");
