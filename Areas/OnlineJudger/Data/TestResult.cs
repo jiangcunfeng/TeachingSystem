@@ -9,7 +9,7 @@ namespace TeachingSystem.Data
         public string StudentId {get; set;}
         [Required]
         //QuestionId,Answer
-        Dictionary<string, string> QA = new Dictionary<string, string>();
+        public Dictionary<string, string> QA = new Dictionary<string, string>();
         
     }
 }
