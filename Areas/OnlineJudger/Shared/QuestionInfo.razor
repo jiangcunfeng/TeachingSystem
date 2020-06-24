@@ -14,7 +14,7 @@
             <MatTextField Label="Id" @bind-Value="question.QuestionId" FullWidth="true"/>
         </p>
         <p>
-            <MatTextField Label="Type" @bind-Value="question.Type" FullWidth="true"/>
+            <MatTextField Label="Type" @bind-Value="question.Type" FullWidth="true" HelperText="TrueOrFalse SingleChoice MultipleChoice"/>
         </p>
         <p>
             <MatTextField Label="Name" @bind-Value="question.Name" FullWidth="true"/>
@@ -38,7 +38,7 @@
         </p>
         }
         <p>
-            <MatTextField  Label="Answer" @bind-Value="question.Answer" FullWidth="true"/>
+            <MatTextField  Label="Answer" @bind-Value="question.Answer" FullWidth="true" HelperText="T F A B C D AC ABCD"/>
         </p>
         <p>
             <MatTextField Label="Course" @bind-Value="question.Course" FullWidth="true"/>

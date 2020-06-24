@@ -1,0 +1,50 @@
+@page "/online-judger/statistics"
+
+<h1>Statistics</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">TestPaperId</th>
+            <th scope="col">StudentId</th>
+            <th scope="col">Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        @if(testResults != null)
+        {
+            foreach(var testResult in testResults)
+            {
+                <tr>
+                    <td>@testResult.TestPaperId</td>
+                    <td>@testResult.StudentId</td>
+                    <td>@testResult.Score</td>
+                </tr>
+            }
+        }
+        else 
+        {
+            <div class="spinner-border" role="status">
+                <span class="sr-only">加载中……</span>
+            </div>
+        }
+
+    </tbody>
+</table>
+
+@code{
+    int page = 0;
+    int pageSize = 25;
+    int size = 0;
+    IEnumerable<TestResult> testResults;
+    async Task UpdateList()
+    {
+        testResults = await DbContext.TestResults.Skip(page * pageSize).Take(pageSize).ToListAsync();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        size = await DbContext.TestPapers.CountAsync();
+        await UpdateList();
+    }
+}

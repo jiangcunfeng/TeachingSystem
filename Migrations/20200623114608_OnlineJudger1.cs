@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -20,6 +21,23 @@ namespace TeachingSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Classrooms",
+                columns: table => new
+                {
+                    ClassroomId = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Campus = table.Column<string>(nullable: true),
+                    Building = table.Column<string>(nullable: true),
+                    RoomNumber = table.Column<int>(nullable: false),
+                    ClassroomName = table.Column<string>(nullable: true),
+                    Capacity = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Classrooms", x => x.ClassroomId);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,6 +92,36 @@ namespace TeachingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TestResults",
+                columns: table => new
+                {
+                    TestResultId = table.Column<string>(nullable: false),
+                    TestPaperId = table.Column<string>(nullable: true),
+                    StudentId = table.Column<string>(nullable: true),
+                    Score = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestResults", x => x.TestResultId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tests",
+                columns: table => new
+                {
+                    TestId = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    className = table.Column<string>(nullable: false),
+                    TestPaperId = table.Column<string>(nullable: false),
+                    start_time = table.Column<string>(nullable: true),
+                    end_time = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tests", x => x.TestId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -92,6 +140,47 @@ namespace TeachingSystem.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "newClass",
+                columns: table => new
+                {
+                    newClassId = table.Column<string>(nullable: false),
+                    CourseId = table.Column<string>(nullable: true),
+                    TeacherID = table.Column<string>(nullable: true),
+                    TeacherName = table.Column<string>(nullable: true),
+                    StuIDList = table.Column<List<string>>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_newClass", x => x.newClassId);
+                    table.ForeignKey(
+                        name: "FK_newClass_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpecialityCourse",
+                columns: table => new
+                {
+                    SpecialityCourseID = table.Column<string>(nullable: false),
+                    CourseId = table.Column<string>(nullable: true),
+                    UserID = table.Column<string>(nullable: true),
+                    UserName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpecialityCourse", x => x.SpecialityCourseID);
+                    table.ForeignKey(
+                        name: "FK_SpecialityCourse_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -176,11 +265,20 @@ namespace TeachingSystem.Migrations
                     ClassId = table.Column<string>(nullable: false),
                     CourseId = table.Column<string>(nullable: true),
                     TeacherId = table.Column<string>(nullable: true),
+                    ClassroomId = table.Column<int>(nullable: true),
+                    TeachTime = table.Column<List<int>>(nullable: true),
+                    TestTime = table.Column<string>(nullable: true),
                     UserClassesId = table.Column<long>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Classes", x => x.ClassId);
+                    table.ForeignKey(
+                        name: "FK_Classes_Classrooms_ClassroomId",
+                        column: x => x.ClassroomId,
+                        principalTable: "Classrooms",
+                        principalColumn: "ClassroomId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Classes_Courses_CourseId",
                         column: x => x.CourseId,
@@ -300,10 +398,10 @@ namespace TeachingSystem.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "4c1cb159-2fb9-4d25-b26a-244553862ea1", "1b4eceea-7352-48ca-9ddd-a2c88cd2936d", "Admin", "ADMIN" },
-                    { "ec28755e-2ef1-494f-a1be-937c0e52ff74", "d596329b-6510-4918-b134-347c68749ee8", "Teacher", "TEACHER" },
-                    { "63fe8932-5754-41bb-adce-c4c1b23e2f4a", "540fcf1a-3d5f-4687-8e56-b759f9abb5b7", "Student", "STUDENT" },
-                    { "764d1800-64e8-4f7d-a7f1-6894f00aec3a", "df7f3594-f860-47a4-843a-56865814e350", "Manager", "MANAGER" }
+                    { "bd0808a6-e59d-4f1b-aead-19c4578b1e7f", "b22943f7-2706-47a2-b123-e687de6ac5b7", "Admin", "ADMIN" },
+                    { "5ca32715-04ee-4adb-b982-d2d54a1cabe9", "6509e2cc-2187-43cd-8284-fd1f01ade647", "Teacher", "TEACHER" },
+                    { "13f12e3d-8187-44f5-bd14-b06f4901df74", "6a680cdc-7bc6-4390-8869-72e68fcb22f7", "Student", "STUDENT" },
+                    { "4b0f4f44-86bd-4215-9450-5ef682e1d2cb", "c172af72-beb3-43b5-969a-2b128c2e6591", "Manager", "MANAGER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -359,6 +457,11 @@ namespace TeachingSystem.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Classes_ClassroomId",
+                table: "Classes",
+                column: "ClassroomId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Classes_CourseId",
                 table: "Classes",
                 column: "CourseId");
@@ -372,6 +475,11 @@ namespace TeachingSystem.Migrations
                 name: "IX_Classes_UserClassesId",
                 table: "Classes",
                 column: "UserClassesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_newClass_CourseId",
+                table: "newClass",
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostReplies_PostId",
@@ -392,6 +500,11 @@ namespace TeachingSystem.Migrations
                 name: "IX_Posts_UserId",
                 table: "Posts",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SpecialityCourse_CourseId",
+                table: "SpecialityCourse",
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClasses_UserId",
@@ -492,13 +605,25 @@ namespace TeachingSystem.Migrations
                 name: "ClassChoices");
 
             migrationBuilder.DropTable(
+                name: "newClass");
+
+            migrationBuilder.DropTable(
                 name: "PostReplies");
 
             migrationBuilder.DropTable(
                 name: "Questions");
 
             migrationBuilder.DropTable(
+                name: "SpecialityCourse");
+
+            migrationBuilder.DropTable(
                 name: "TestPapers");
+
+            migrationBuilder.DropTable(
+                name: "TestResults");
+
+            migrationBuilder.DropTable(
+                name: "Tests");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -511,6 +636,9 @@ namespace TeachingSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "Classes");
+
+            migrationBuilder.DropTable(
+                name: "Classrooms");
 
             migrationBuilder.DropTable(
                 name: "Courses");

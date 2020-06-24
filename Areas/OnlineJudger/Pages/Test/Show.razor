@@ -1,0 +1,156 @@
+@page "/online-judger/tests/show/{id}"
+@inject IMatToaster Toaster
+@using TeachingSystem.Areas.OnlineJudger.Shared
+@if (name != null){
+<h1>考试：@name </h1>
+<h4>本测试允许1次尝试</h4>
+<h4>本测试可保存并随时继续，直到时间结束</h4>
+}
+@if (course != null){
+<h4>科目：@course</h4>
+}
+@if (start_time != null){
+<h4>时间：@start_time - @end_time</h4>
+}
+
+@if (testPaper != null)
+{
+    num = 1;
+    @foreach(Question question in question_list)
+    {
+        var localnum = num;
+        switch(question.Type){
+            case "TrueOrFalse":
+                <MatRadioGroup @bind-Value="@ValTF[localnum-1]" TValue="string">
+                    <div> @localnum: @question.Content </div>
+                    <div ><MatRadioButton Value="@("True")" TValue="string">True</MatRadioButton></div>
+                    <div ><MatRadioButton Value="@("False")" TValue="string">False </MatRadioButton></div>
+                </MatRadioGroup>    
+            break;
+            case "SingleChoice":
+                <MatRadioGroup @bind-Value="@ValSC[localnum-1]" TValue="string">
+                    <div> @localnum @question.Content (Single Choice) </div>
+                    <div><MatRadioButton Value="@("A")" TValue="string">A. @question.ChoiceA</MatRadioButton></div>
+                    <div><MatRadioButton Value="@("B")" TValue="string">B. @question.ChoiceB</MatRadioButton></div>
+                    <div><MatRadioButton Value="@("C")" TValue="string">C. @question.ChoiceC</MatRadioButton></div>
+                    <div><MatRadioButton Value="@("D")" TValue="string">D. @question.ChoiceD</MatRadioButton></div>
+                </MatRadioGroup>
+            break;
+            case "MultipleChoice":
+               
+                <div> @localnum: @question.Content (Multiple Choice) </div>
+                <div><MatCheckbox @bind-Value="@ValA[localnum-1]">A. @question.ChoiceA</MatCheckbox></div>
+                <div><MatCheckbox @bind-Value="@ValB[localnum-1]">B. @question.ChoiceB</MatCheckbox></div>
+                <div><MatCheckbox @bind-Value="@ValC[localnum-1]">C. @question.ChoiceC</MatCheckbox></div>
+                <div><MatCheckbox @bind-Value="@ValD[localnum-1]">D. @question.ChoiceD</MatCheckbox></div>
+                   
+                break; 
+        }
+        num = num + 1;   
+    }
+  <MatButton OnClick="@(_ => {NavigationManager.NavigateTo("/online-judger/test-papers");})" Label="Back"></MatButton>
+  <MatButton OnClick="@SaveResult" Label="Save"></MatButton>
+
+}
+else{
+    <h4>所绑定的Test Paper Id不在数据库中</h4>
+}
+
+@code {
+
+    [Parameter]
+    public bool admin {get;set;} = false;
+
+    [Parameter]
+    public string id {get;set;}
+      public string end_time {get;set;}
+    public string start_time{get;set;}
+    public string TestPaperid {get;set;}
+    public int num {get;set;}
+    public string[] ValTF=new string[100];
+    public string[] ValSC=new string[100];
+    public string[] ValMC=new string[100];
+    public bool[]  ValA= new bool[100];
+    public bool[]  ValB= new bool[100];
+    public bool[]  ValC= new bool[100];
+    public bool[]  ValD= new bool[100];
+    public string course{get;set;}
+    public string name{get;set;}
+    [Parameter]
+    public Action OnSave {get;set;}
+    public Dictionary<string, string> QA_temp = new Dictionary<string, string>();
+    TestPaper testPaper;
+
+    TestResult zmtest;
+    Test test;
+    List<Question> question_list = new List<Question>();
+    //按 Save之后存到数据库
+    async Task SaveResult() 
+    {
+       TestResult testResult = new TestResult();
+       testResult.TestResultId = id;
+       testResult.TestPaperId = TestPaperid;
+       testResult.StudentId = null;
+       //System.Console.Write("hello");
+       int i  = 0;
+       foreach(Question question in question_list){
+           switch(question.Type){
+            case "TrueOrFalse":
+                testResult.QA.Add(question.QuestionId,ValTF[i]);
+                break;
+            case "SingleChoice":
+                testResult.QA.Add(question.QuestionId,ValSC[i]);
+                break;
+            case "MultipleChoice":
+                ValMC[i] = "";
+                if (ValA[i])  ValMC[i] += "A";
+                if (ValB[i])  ValMC[i] += "B";
+                if (ValC[i])  ValMC[i] += "C";
+                if (ValD[i])  ValMC[i] += "D";
+                testResult.QA.Add(question.QuestionId, ValMC[i]);
+                break;
+           }
+           i = i + 1;
+       }
+
+        if (await DbContext.TestResults.Where(c => c.TestResultId == testResult.TestResultId).CountAsync() != 0) 
+        {
+            Toaster.Add("The Id already exists, use another one", MatToastType.Danger);
+        }
+        else 
+        {
+            int score=0;
+            foreach(KeyValuePair<string, string> dic in testResult.QA){
+                var question = DbContext.Questions.Single(c => c.QuestionId == dic.Key);
+                if(question.Answer == dic.Value){
+                    score += (int)(Convert.ToDouble(question.Point));
+                }
+            }
+            testResult.Score = score.ToString();
+
+            await DbContext.TestResults.AddAsync(testResult);
+            await DbContext.SaveChangesAsync();
+
+        }
+        
+        NavigationManager.NavigateTo("/online-judger/tests");
+    }
+
+    protected override async Task OnInitializedAsync() 
+    {
+        
+        test = await  DbContext.Tests.SingleAsync(c => c.TestId == id);
+        testPaper = await  DbContext.TestPapers.SingleAsync(c => c.TestPaperId == test.TestPaperId);
+        TestPaperid = testPaper.TestPaperId;
+        course = test.className;
+        name = test.Name;
+        start_time = test.start_time;
+        end_time = test.end_time;
+        if (testPaper != null)
+        {
+            foreach(String id in testPaper.Content){
+               question_list.Add(await DbContext.Questions.SingleAsync(c => c.QuestionId == id));
+            }
+        }
+    }
+} 

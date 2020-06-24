@@ -14,9 +14,10 @@
 </div>
 
 <MatButton Icon="add" Link="/online-judger/test-bank/create">Create Question</MatButton>
-<MatAutocompleteList Items="@options" TItem="string" Label="Search By Type" @bind-Value="@typeKey"></MatAutocompleteList>
+<MatAutocompleteList Items="@options" TItem="string" Label="Search By Type" @bind-Value="@searchByTypeKey"></MatAutocompleteList>
 <MatButton OnClick="@Search" Label="Submit"></MatButton>
 <MatStringField Icon="assignment" ReadOnly="true" Value="@questionsSelected.Count.ToString()" Label="Questions Selected" IconOnClick="@ShowQuestionsSelected"></MatStringField>
+<MatAutocompleteList Items="@options" TItem="string" Label="Test Paper By Type" @bind-Value="@testPaperByTypeKey"></MatAutocompleteList>
 <MatButton OnClick="@(_ => {createDialogIsOpen=true;})" Label="Create"></MatButton>
 
 <table class="table">
@@ -89,7 +90,7 @@
     IEnumerable<Question> questions;
     Question questionToDelete = null;
     string[] options = new[] {"TrueOrFalse", "SingleChoice", "MultipleChoice"};
-    string typeKey;
+    string searchByTypeKey;
     bool searchFlag = false;
     List<Question> questionsSelected = new List<Question>();
     bool showQuestionsSelected = false;
@@ -97,6 +98,7 @@
     string testPaperId;
     string testPaperName;
     string testPaperCourse;
+    string testPaperByTypeKey;
     async Task OnPage(MatPaginatorPageEvent e)
     {
         pageSize = e.PageSize;
@@ -113,13 +115,13 @@
     }
     async Task Search() 
     {
-        if (typeKey != null && typeKey != "")
+        if (searchByTypeKey != null && searchByTypeKey != "")
         {
             searchFlag = true;
         }
         await UpdateList();
         searchFlag = false;
-        typeKey = null;
+        searchByTypeKey = null;
     }
     async Task ShowQuestionsSelected()
     {
@@ -130,7 +132,7 @@
     {
         if (searchFlag)
         {
-            questions = await DbContext.Questions.Where(c => c.Type == typeKey).Skip(page * pageSize).Take(pageSize).ToListAsync();
+            questions = await DbContext.Questions.Where(c => c.Type == searchByTypeKey).Skip(page * pageSize).Take(pageSize).ToListAsync();
         }
         else if (showQuestionsSelected)
         {
@@ -143,6 +145,10 @@
     }
     async Task CreateTestPaper()
     {
+        if (questionsSelected.Count == 0)
+        {
+            questionsSelected = await DbContext.Questions.Where(c => c.Type == testPaperByTypeKey).ToListAsync();
+        }
         TestPaper newTestPaper = new TestPaper();
         newTestPaper.TestPaperId = testPaperId;
         newTestPaper.Name = testPaperName;
@@ -167,6 +173,7 @@
         testPaperName = null;
         questionsSelected = new List<Question>();
         testPaperCourse = null;
+        testPaperByTypeKey = null;
         createDialogIsOpen = false;
     }
     protected override async Task OnInitializedAsync()

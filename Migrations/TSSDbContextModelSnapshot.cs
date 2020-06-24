@@ -48,29 +48,29 @@ namespace TeachingSystem.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e09b585f-cd04-43a5-87a9-11738e2872e9",
-                            ConcurrencyStamp = "a83a54ea-ff62-402e-925e-37f1039dc513",
+                            Id = "bd0808a6-e59d-4f1b-aead-19c4578b1e7f",
+                            ConcurrencyStamp = "b22943f7-2706-47a2-b123-e687de6ac5b7",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "524e8573-afbe-480b-b6fb-5c59efc9851a",
-                            ConcurrencyStamp = "5c783f52-1857-4acc-8dc5-01b18923784f",
+                            Id = "5ca32715-04ee-4adb-b982-d2d54a1cabe9",
+                            ConcurrencyStamp = "6509e2cc-2187-43cd-8284-fd1f01ade647",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = "e7691cfd-4c54-4ac9-ac7b-84a6077c892b",
-                            ConcurrencyStamp = "37c18b4a-9aad-41ed-a536-22a66758869f",
+                            Id = "13f12e3d-8187-44f5-bd14-b06f4901df74",
+                            ConcurrencyStamp = "6a680cdc-7bc6-4390-8869-72e68fcb22f7",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = "c93d0559-8e1d-4895-b71c-5b986541f766",
-                            ConcurrencyStamp = "9410d188-f6e4-488b-96ea-39f6ddb3c675",
+                            Id = "4b0f4f44-86bd-4215-9450-5ef682e1d2cb",
+                            ConcurrencyStamp = "c172af72-beb3-43b5-969a-2b128c2e6591",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         });
@@ -339,6 +339,49 @@ namespace TeachingSystem.Migrations
                     b.ToTable("PostReplies");
                 });
 
+            modelBuilder.Entity("TeachingSystem.Data.Question", b =>
+                {
+                    b.Property<string>("QuestionId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ChoiceA")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ChoiceB")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ChoiceC")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ChoiceD")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Course")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Point")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("QuestionId");
+
+                    b.ToTable("Questions");
+                });
+
             modelBuilder.Entity("TeachingSystem.Data.SpecialityCourse", b =>
                 {
                     b.Property<string>("SpecialityCourseID")
@@ -362,39 +405,68 @@ namespace TeachingSystem.Migrations
 
             modelBuilder.Entity("TeachingSystem.Data.Test", b =>
                 {
-                    b.Property<long>("TestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                    b.Property<string>("TestId")
+                        .HasColumnType("text");
 
-                    b.Property<string>("ClassId")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TestPaperId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("className")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("end_time")
+                        .HasColumnType("text");
+
+                    b.Property<string>("start_time")
                         .HasColumnType("text");
 
                     b.HasKey("TestId");
 
-                    b.HasIndex("ClassId");
-
                     b.ToTable("Tests");
+                });
+
+            modelBuilder.Entity("TeachingSystem.Data.TestPaper", b =>
+                {
+                    b.Property<string>("TestPaperId")
+                        .HasColumnType("text");
+
+                    b.Property<string[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("Course")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("TestPaperId");
+
+                    b.ToTable("TestPapers");
                 });
 
             modelBuilder.Entity("TeachingSystem.Data.TestResult", b =>
                 {
-                    b.Property<long>("TestResultId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                    b.Property<string>("TestResultId")
+                        .HasColumnType("text");
 
-                    b.Property<long?>("TestId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Score")
+                        .HasColumnType("text");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("StudentId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TestPaperId")
                         .HasColumnType("text");
 
                     b.HasKey("TestResultId");
-
-                    b.HasIndex("TestId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("TestResults");
                 });
@@ -626,24 +698,6 @@ namespace TeachingSystem.Migrations
                     b.HasOne("TeachingSystem.Data.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId");
-                });
-
-            modelBuilder.Entity("TeachingSystem.Data.Test", b =>
-                {
-                    b.HasOne("TeachingSystem.Data.Class", "Class")
-                        .WithMany()
-                        .HasForeignKey("ClassId");
-                });
-
-            modelBuilder.Entity("TeachingSystem.Data.TestResult", b =>
-                {
-                    b.HasOne("TeachingSystem.Data.Test", "Test")
-                        .WithMany()
-                        .HasForeignKey("TestId");
-
-                    b.HasOne("TeachingSystem.Data.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("TeachingSystem.Data.User", b =>
